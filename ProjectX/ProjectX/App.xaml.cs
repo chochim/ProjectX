@@ -68,7 +68,7 @@ namespace ProjectX
                     //TODO: Load state from previously suspended application
                 }
 
-
+                //Add a kinect region
                 KinectRegion kinectRegion = new KinectRegion();
                 KinectUserViewer kinectUserViewer = new KinectUserViewer()
                 {
