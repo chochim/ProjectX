@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Kinect.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -67,8 +68,24 @@ namespace ProjectX
                     //TODO: Load state from previously suspended application
                 }
 
+
+                KinectRegion kinectRegion = new KinectRegion();
+                KinectUserViewer kinectUserViewer = new KinectUserViewer()
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    Height = 100,
+                    Width = 121
+                };
+
+                Grid grid = new Grid();
+                grid.Children.Add(kinectRegion);
+                grid.Children.Add(kinectUserViewer);
+
+                kinectRegion.Content = rootFrame;
+
                 // Place the frame in the current Window
-                Window.Current.Content = rootFrame;
+                Window.Current.Content = grid;
             }
 
             if (rootFrame.Content == null)
