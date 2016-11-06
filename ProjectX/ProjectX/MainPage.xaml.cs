@@ -47,25 +47,44 @@ namespace ProjectX
         Body[] bodies;
         MultiSourceFrameReader msfr;
 
+        GestureRecognitionEngine gestureEngine;
+
+
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             sensor = KinectSensor.GetDefault();
-            irReader = sensor.InfraredFrameSource.OpenReader();
-            FrameDescription fd = sensor.InfraredFrameSource.FrameDescription;
-            irData = new ushort[fd.LengthInPixels];
-            irDataConverted = new byte[fd.LengthInPixels * 4];
-            irBitmap = new WriteableBitmap(fd.Width, fd.Height);
-            image.Source = irBitmap;
+            if (sensor != null)
+            {
+                irReader = sensor.InfraredFrameSource.OpenReader();
+                FrameDescription fd = sensor.InfraredFrameSource.FrameDescription;
+                irData = new ushort[fd.LengthInPixels];
+                irDataConverted = new byte[fd.LengthInPixels * 4];
+                irBitmap = new WriteableBitmap(fd.Width, fd.Height);
+                image.Source = irBitmap;
 
-            bodies = new Body[6];
-            msfr = sensor.OpenMultiSourceFrameReader(FrameSourceTypes.Body | FrameSourceTypes.Infrared);
-            msfr.MultiSourceFrameArrived += Msfr_MultiSourceFrameArrived;
-
-
-            sensor.Open();
-            //irReader.FrameArrived += irReader_FrameArrived;
+                bodies = new Body[6];
+                msfr = sensor.OpenMultiSourceFrameReader(FrameSourceTypes.Body | FrameSourceTypes.Infrared);
+                msfr.MultiSourceFrameArrived += Msfr_MultiSourceFrameArrived;
 
 
+                gestureEngine = new GestureRecognitionEngine();
+                gestureEngine.GestureType = GestureType.SwipeRightGesture;
+                gestureEngine.GestureRecognized += new EventHandler<GestureEventArgs>(swipeRightRecognized);
+
+
+                sensor.Open();
+                //irReader.FrameArrived += irReader_FrameArrived;
+            }
+        }
+
+        private void swipeRightRecognized(object sender, GestureEventArgs e)
+        {
+            print("SwipRightRecognized");
+        }
+
+        private void Sensor_GestureRecognized(object sender, EventArgs e)
+        {
+            print("WAVE GESTURE");
         }
 
         private void Msfr_MultiSourceFrameArrived(MultiSourceFrameReader sender, MultiSourceFrameArrivedEventArgs args)
@@ -96,11 +115,15 @@ namespace ProjectX
 
                                 bodyFrame.GetAndRefreshBodyData(bodies);
                                 bodyCanvas.Children.Clear();
+
+                                //Body body = bodies[0];
                                 foreach (Body body in bodies)
                                 {
                                     if (body.IsTracked)
                                     {
-                                        detectGesture(body);
+                                        //   detectGesture(body);
+                                        gestureEngine.Body = body;
+                                        gestureEngine.StartRecognize();
 
                                         Joint headJoint = body.Joints[JointType.Head];
                                         Joint rightHand = body.Joints[JointType.HandRight];
@@ -114,6 +137,16 @@ namespace ProjectX
                                         }
                                     }
                                 }
+                                /*
+                                Joint rightHand = body.Joints[JointType.HandRight];
+                                if (rightHand.TrackingState == TrackingState.Tracked)
+                                {
+                                    DepthSpacePoint dsp = sensor.CoordinateMapper.MapCameraPointToDepthSpace(rightHand.Position);
+                                    Ellipse headCircle = new Ellipse() { Width = 50, Height = 50, Fill = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0)) };
+                                    bodyCanvas.Children.Add(headCircle);
+                                    Canvas.SetLeft(headCircle, dsp.X - 25);
+                                    Canvas.SetTop(headCircle, dsp.Y - 25);
+                                }*/
                             }
                         }
 
@@ -128,7 +161,8 @@ namespace ProjectX
             Joint leftHand = body.Joints[JointType.HandLeft];
             Joint rightElbow = body.Joints[JointType.ElbowRight];
             Joint leftElbow = body.Joints[JointType.ElbowLeft];
-
+            print("gesture detection");
+           
         }
 
         /// <summary>

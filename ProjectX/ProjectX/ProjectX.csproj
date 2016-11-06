@@ -120,6 +120,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GestureEventArgs.cs" />
+    <Compile Include="GestureRecognitionEngine.cs" />
+    <Compile Include="GestureRecognitionResult.cs" />
+    <Compile Include="GestureType.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
