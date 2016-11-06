@@ -23,6 +23,7 @@ namespace ProjectX
         protected override bool IsGestureValid(Body body)
         {
             var currentHandRightPoisition = body.Joints[JointType.HandRight].Position;
+
             if (validatePosition.X < currentHandRightPoisition.X)
             {
                 return false;
