@@ -77,12 +77,14 @@ namespace ProjectX
 
         private void swipeGestureRecognized(object sender, GestureEventArgs e)
         {
-            if (e.GestureType.Equals(GestureType.SwipeLeftGesture))
+            if (e.GestureType.Equals(GestureType.SwipeLeftGestureWithRightHand) ||
+                e.GestureType.Equals(GestureType.SwipeLeftGestureWithLeftHand))
             {
                 swipeLeft();
                 return;
             }
-            if (e.GestureType.Equals(GestureType.SwipeRightGesture))
+            if (e.GestureType.Equals(GestureType.SwipeRightGestureWithRightHand) || 
+                e.GestureType.Equals(GestureType.SwipeRightGestureWithLeftHand))
             {
                 swipeRight();
                 return;

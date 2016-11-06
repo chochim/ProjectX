@@ -8,7 +8,9 @@ namespace ProjectX
 {
     public enum GestureType
     {
-        SwipeLeftGesture,
-        SwipeRightGesture
+        SwipeLeftGestureWithRightHand,
+        SwipeRightGestureWithRightHand,
+        SwipeLeftGestureWithLeftHand,
+        SwipeRightGestureWithLeftHand
     }
 }

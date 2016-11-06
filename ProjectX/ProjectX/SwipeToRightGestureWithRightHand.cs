@@ -7,9 +7,9 @@ using WindowsPreview.Kinect;
 
 namespace ProjectX
 {
-    class SwipeToRightGesture: GestureBase
+    class SwipeToRightGestureWithRightHand: GestureBase
     {
-        public SwipeToRightGesture() : base(GestureType.SwipeRightGesture) { }
+        public SwipeToRightGestureWithRightHand() : base(GestureType.SwipeRightGestureWithRightHand) { }
 
         private CameraSpacePoint validatePosition;
         private CameraSpacePoint startingPosition;
