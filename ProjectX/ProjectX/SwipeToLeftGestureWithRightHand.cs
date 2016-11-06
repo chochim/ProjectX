@@ -8,9 +8,9 @@ using WindowsPreview.Kinect;
 
 namespace ProjectX
 {
-    public class SwipeToLeftGesture : GestureBase
+    public class SwipeToLeftGestureWithRightHand : GestureBase
     {
-        public SwipeToLeftGesture() : base(GestureType.SwipeLeftGesture)
+        public SwipeToLeftGestureWithRightHand() : base(GestureType.SwipeLeftGestureWithRightHand)
         {
         }
 

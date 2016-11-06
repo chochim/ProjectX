@@ -38,8 +38,8 @@ namespace ProjectX
         private void InitilizeGesture()
         {
             this.gestureCollection = new List<GestureBase>();
-            this.gestureCollection.Add(new SwipeToLeftGesture());
-            this.gestureCollection.Add(new SwipeToRightGesture());
+            this.gestureCollection.Add(new SwipeToLeftGestureWithRightHand());
+            this.gestureCollection.Add(new SwipeToRightGestureWithRightHand());
         }
 
         /// <summary>
