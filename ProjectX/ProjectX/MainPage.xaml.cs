@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 using Windows.UI.Xaml.Shapes;
 using Windows.UI;
+using System.Diagnostics;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -99,6 +100,8 @@ namespace ProjectX
                                 {
                                     if (body.IsTracked)
                                     {
+                                        detectGesture(body);
+
                                         Joint headJoint = body.Joints[JointType.Head];
                                         Joint rightHand = body.Joints[JointType.HandRight];
                                         if (rightHand.TrackingState == TrackingState.Tracked)
@@ -117,6 +120,26 @@ namespace ProjectX
                     }
                 }
             }
+        }
+
+        private void detectGesture(Body body)
+        {
+            Joint rightHand = body.Joints[JointType.HandRight];
+            Joint leftHand = body.Joints[JointType.HandLeft];
+            Joint rightElbow = body.Joints[JointType.ElbowRight];
+            Joint leftElbow = body.Joints[JointType.ElbowLeft];
+
+        }
+
+        /// <summary>
+        /// Writes the debug statement to the console
+        /// </summary>
+        /// <param name="debugStatement"></param>
+        private void print(string debugStatement)
+        {
+#if DEBUG
+            Debug.WriteLine(debugStatement);
+#endif
         }
 
         private void irReader_FrameArrived(InfraredFrameReader sender, InfraredFrameArrivedEventArgs args)
