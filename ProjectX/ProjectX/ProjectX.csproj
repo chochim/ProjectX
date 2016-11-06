@@ -130,7 +130,9 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SwipeToLeftGestureWithLeftHand.cs" />
     <Compile Include="SwipeToLeftGestureWithRightHand.cs" />
+    <Compile Include="SwipeToRightGestureWithLeftHand.cs" />
     <Compile Include="SwipeToRightGestureWithRightHand.cs" />
   </ItemGroup>
   <ItemGroup>

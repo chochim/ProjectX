@@ -40,6 +40,8 @@ namespace ProjectX
             this.gestureCollection = new List<GestureBase>();
             this.gestureCollection.Add(new SwipeToLeftGestureWithRightHand());
             this.gestureCollection.Add(new SwipeToRightGestureWithRightHand());
+            this.gestureCollection.Add(new SwipeToLeftGestureWithLeftHand());
+            this.gestureCollection.Add(new SwipeToRightGestureWithLeftHand());
         }
 
         /// <summary>
