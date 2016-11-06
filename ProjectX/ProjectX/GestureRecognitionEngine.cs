@@ -67,24 +67,24 @@ namespace ProjectX
         /// </summary>
         public void StartRecognize()
         {
-            if (this.IsGestureDetected)
+            if (IsGestureDetected)
             {
-                while (this.SkipFramesAfterGestureIsDetected <= 30)
+                while (SkipFramesAfterGestureIsDetected <= 30)
                 {
-                    this.SkipFramesAfterGestureIsDetected++;
+                    SkipFramesAfterGestureIsDetected++;
                 }
                 this.RestGesture();
                 return;
             }
 
-            foreach (var item in this.gestureCollection)
+            foreach (var item in gestureCollection)
             {
                 if (item.CheckForGesture(this.Body))
                 {
-                    if (this.GestureRecognized != null)
+                    if (GestureRecognized != null)
                     {
-                        this.GestureRecognized(this, new GestureEventArgs(GestureRecognitionResult.Success, item.GestureType));
-                        this.IsGestureDetected = true;
+                        GestureRecognized(this, new GestureEventArgs(GestureRecognitionResult.Success, item.GestureType));
+                        IsGestureDetected = true;
                     }
 
                 }

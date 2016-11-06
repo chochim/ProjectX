@@ -15,7 +15,7 @@ namespace ProjectX
             this.GestureType = type;
         }
 
-        public Boolean IsRecognizedStarted { get; set; }
+        public bool IsRecognizedStarted { get; set; }
 
         private int CurrentFrameCount { get; set; }
         public GestureType GestureType { get; set; }
@@ -30,40 +30,40 @@ namespace ProjectX
 
         public long GestureTimeStamp { get; set; }
 
-        protected abstract Boolean ValidateGestureStartCondition(Body body);
+        protected abstract bool ValidateGestureStartCondition(Body body);
 
-        protected abstract Boolean ValidateGestureEndCondition(Body body);
+        protected abstract bool ValidateGestureEndCondition(Body body);
 
-        protected abstract Boolean ValidateBaseCondition(Body body);
+        protected abstract bool ValidateBaseCondition(Body body);
 
-        protected abstract Boolean IsGestureValid(Body body);
+        protected abstract bool IsGestureValid(Body body);
 
-        public virtual Boolean CheckForGesture(Body body)
+        public virtual bool CheckForGesture(Body body)
         {
-            if (this.IsRecognizedStarted == false)
+            if (IsRecognizedStarted == false)
             {
-                if (this.ValidateGestureStartCondition(body))
+                if (ValidateGestureStartCondition(body))
                 {
-                    this.IsRecognizedStarted = true;
-                    this.CurrentFrameCount = 0;
+                    IsRecognizedStarted = true;
+                    CurrentFrameCount = 0;
                 }
             }
             else
             {
-                if (this.CurrentFrameCount == this.MaximumNumberOfFrameToProcess)
+                if (CurrentFrameCount == MaximumNumberOfFrameToProcess)
                 {
-                    this.IsRecognizedStarted = false;
+                    IsRecognizedStarted = false;
                     if (ValidateBaseCondition(body) && ValidateGestureEndCondition(body))
                     {
                         return true;
                     }
+                }
 
-                    this.CurrentFrameCount++;
+                CurrentFrameCount++;
 
-                    if (!IsGestureValid(body) && !ValidateBaseCondition(body))
-                    {
-                        this.IsRecognizedStarted = false;
-                    }
+                if (!IsGestureValid(body) && !ValidateBaseCondition(body))
+                {
+                    IsRecognizedStarted = false;
                 }
             }
             return false;

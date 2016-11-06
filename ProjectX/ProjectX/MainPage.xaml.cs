@@ -22,8 +22,6 @@ using Windows.UI.Xaml.Shapes;
 using Windows.UI;
 using System.Diagnostics;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace ProjectX
 {
     /// <summary>
@@ -40,6 +38,8 @@ namespace ProjectX
 
         KinectSensor sensor;
         InfraredFrameReader irReader;
+        //BodyFrameReader bodyReader;
+
         ushort[] irData;
         byte[] irDataConverted;
         WriteableBitmap irBitmap;
@@ -107,7 +107,8 @@ namespace ProjectX
                 {
                     using (BodyFrame bodyFrame = msf.BodyFrameReference.AcquireFrame())
                     {
-
+                        bodyFrame.GetAndRefreshBodyData(bodies);
+                        bodyCanvas.Children.Clear();
                         using (InfraredFrame irFrame = msf.InfraredFrameReference.AcquireFrame())
                         {
                             if (irFrame != null && bodyFrame != null)
@@ -133,9 +134,6 @@ namespace ProjectX
                                 {
                                     if (body.IsTracked)
                                     {
-                                        //   detectGesture(body);
-                                        
-
                                         Joint headJoint = body.Joints[JointType.Head];
                                         Joint rightHand = body.Joints[JointType.HandRight];
                                         if (rightHand.TrackingState == TrackingState.Tracked)
@@ -151,32 +149,11 @@ namespace ProjectX
                                         gestureEngine.StartRecognize();
                                     }
                                 }
-                                /*
-                                Joint rightHand = body.Joints[JointType.HandRight];
-                                if (rightHand.TrackingState == TrackingState.Tracked)
-                                {
-                                    DepthSpacePoint dsp = sensor.CoordinateMapper.MapCameraPointToDepthSpace(rightHand.Position);
-                                    Ellipse headCircle = new Ellipse() { Width = 50, Height = 50, Fill = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0)) };
-                                    bodyCanvas.Children.Add(headCircle);
-                                    Canvas.SetLeft(headCircle, dsp.X - 25);
-                                    Canvas.SetTop(headCircle, dsp.Y - 25);
-                                }*/
                             }
                         }
-
                     }
                 }
             }
-        }
-
-        private void detectGesture(Body body)
-        {
-            Joint rightHand = body.Joints[JointType.HandRight];
-            Joint leftHand = body.Joints[JointType.HandLeft];
-            Joint rightElbow = body.Joints[JointType.ElbowRight];
-            Joint leftElbow = body.Joints[JointType.ElbowLeft];
-            print("gesture detection");
-           
         }
 
         /// <summary>

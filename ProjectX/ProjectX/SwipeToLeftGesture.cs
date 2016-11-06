@@ -37,6 +37,7 @@ namespace ProjectX
             var handLeftPosition = body.Joints[JointType.HandLeft].Position;
             var shoulderRightPosition = body.Joints[JointType.ShoulderRight].Position;
             var spinePosition = body.Joints[JointType.SpineMid].Position;
+
             if ((handRightPoisition.Y < shoulderRightPosition.Y) &&
                  (handRightPoisition.Y > body.Joints[JointType.ElbowRight].Position.Y) && 
                  (handLeftPosition.Y < spinePosition.Y))
@@ -51,12 +52,10 @@ namespace ProjectX
             double distance = Math.Abs(startingPosition.X - validatePosition.X);
             float currentshoulderDiff = GestureHelper.GetJointDistance(body.Joints[JointType.HandRight],
                                         body.Joints[JointType.ShoulderLeft]);
-
             if (distance > 0.1 && currentshoulderDiff < shoulderDiff)
             {
                 return true;
-            }
-                
+            }          
             return false;
         }
 
@@ -71,7 +70,6 @@ namespace ProjectX
                  (handRightPoisition.Y > body.Joints[JointType.ElbowRight].Position.Y) &&
                  handLeftPosition.Y < spinePosition.Y)
             {
-
                 shoulderDiff = GestureHelper.GetJointDistance(body.Joints[JointType.HandRight],
                                                                 body.Joints[JointType.ShoulderLeft]);
                 validatePosition = body.Joints[JointType.HandRight].Position;
