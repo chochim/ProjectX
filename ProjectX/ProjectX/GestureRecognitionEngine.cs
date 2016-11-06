@@ -1,85 +1,105 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WindowsPreview.Kinect;
 
 namespace ProjectX
 {
     class GestureRecognitionEngine
     {
-        float previousDisance = 0.0f;
+        /// <summary>
+        /// Skip Frames After Gesture IsDetected
+        /// </summary>
+        int SkipFramesAfterGestureIsDetected = 0;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is gesture detected.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is gesture detected; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsGestureDetected { get; set; }
+
+        /// <summary>
+        /// Collection of Gesture
+        /// </summary>
+        private List<GestureBase> gestureCollection = null;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GestureRecognitionEngine" /> class.
+        /// </summary>
         public GestureRecognitionEngine()
         {
-
+            this.InitilizeGesture();
         }
 
-        public event EventHandler<GestureEventArgs> GestureRecognized;
-        public event EventHandler<GestureEventArgs> GestureNotRecognized;
+        /// <summary>
+        /// Initilizes the gesture.
+        /// </summary>
+        private void InitilizeGesture()
+        {
+            this.gestureCollection = new List<GestureBase>();
+            this.gestureCollection.Add(new SwipeToLeftGesture());
+        }
 
+        /// <summary>
+        /// Occurs when [gesture recognized].
+        /// </summary>
+        public event EventHandler<GestureEventArgs> GestureRecognized;
+
+        /// <summary>
+        /// Gets or sets the type of the gesture.
+        /// </summary>
+        /// <value>
+        /// The type of the gesture.
+        /// </value>
         public GestureType GestureType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the skeleton.
+        /// </summary>
+        /// <value>
+        /// The skeleton.
+        /// </value>
         public Body Body { get; set; }
 
+        /// <summary>
+        /// Starts the recognize.
+        /// </summary>
         public void StartRecognize()
         {
-            switch (this.GestureType)
+            if (this.IsGestureDetected)
             {
-                case GestureType.SwipeLeftGesture:
-                    this.MatchSwipeLeftGesture(this.Body);
-                    break;
-                case GestureType.SwipeRightGesture:
-                    this.MatchSwipeRightGesture(this.Body);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private Boolean isRightGestureBeingTracked(Body body)
-        {
-            return body.Joints[JointType.HandRight].TrackingState == TrackingState.Tracked &&
-                    body.Joints[JointType.HandLeft].TrackingState == TrackingState.Tracked;
-        }
-
-        private Boolean isLeftGestureBeingTracked(Body body)
-        {
-            return false;
-        }
-
-
-        private void MatchSwipeRightGesture(Body body)
-        {
-            if (body == null)
-            {
+                while (this.SkipFramesAfterGestureIsDetected <= 30)
+                {
+                    this.SkipFramesAfterGestureIsDetected++;
+                }
+                this.RestGesture();
                 return;
             }
-            if (isRightGestureBeingTracked(body))
+
+            foreach (var item in this.gestureCollection)
             {
-                float currentDistance = GetJointDistance(body.Joints[JointType.HandRight], body.Joints[JointType.HandLeft]);
-                if (currentDistance < 0.1f && previousDisance > 0.1f)
+                if (item.CheckForGesture(this.Body))
                 {
-                    GestureRecognized?.Invoke(this, new GestureEventArgs(GestureRecognitionResult.Success));
+                    if (this.GestureRecognized != null)
+                    {
+                        this.GestureRecognized(this, new GestureEventArgs(GestureRecognitionResult.Success, item.GestureType));
+                        this.IsGestureDetected = true;
+                    }
+
                 }
-                previousDisance = currentDistance;
             }
         }
 
-        private float GetJointDistance(Joint firstJoint, Joint secondJoint)
+        /// <summary>
+        /// Rests the gesture.
+        /// </summary>
+        private void RestGesture()
         {
-            float distX = firstJoint.Position.X - secondJoint.Position.X;
-            float distY = firstJoint.Position.Y - secondJoint.Position.Y;
-            float distZ = firstJoint.Position.Z - secondJoint.Position.Z;
-
-            return (float)Math.Sqrt(Math.Pow(distX, 2) + Math.Pow(distY, 2) + Math.Pow(distZ, 2));
-        }
-
-        private void MatchSwipeLeftGesture(Body body)
-        {
-            throw new NotImplementedException();
+            this.gestureCollection = null;
+            this.InitilizeGesture();
+            this.SkipFramesAfterGestureIsDetected = 0;
+            this.IsGestureDetected = false;
         }
     }
-
-    
 }

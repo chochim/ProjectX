@@ -120,7 +120,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GestureBase.cs" />
     <Compile Include="GestureEventArgs.cs" />
+    <Compile Include="GestureHelper.cs" />
     <Compile Include="GestureRecognitionEngine.cs" />
     <Compile Include="GestureRecognitionResult.cs" />
     <Compile Include="GestureType.cs" />
@@ -128,6 +130,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SwipeToLeftGesture.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

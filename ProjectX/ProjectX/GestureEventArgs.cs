@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProjectX
 {
@@ -12,10 +8,16 @@ namespace ProjectX
         {
             get; internal set;
         }
-            
-        public GestureEventArgs(GestureRecognitionResult result)
+
+        public GestureType GestureType
+        {
+            get; internal set;
+        }
+
+        public GestureEventArgs(GestureRecognitionResult result, GestureType type)
         {
             this.Result = result;
+            this.GestureType = type;
         }
     }
 }

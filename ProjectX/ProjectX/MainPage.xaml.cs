@@ -68,23 +68,35 @@ namespace ProjectX
 
 
                 gestureEngine = new GestureRecognitionEngine();
-                gestureEngine.GestureType = GestureType.SwipeRightGesture;
-                gestureEngine.GestureRecognized += new EventHandler<GestureEventArgs>(swipeRightRecognized);
-
+                gestureEngine.GestureRecognized += new EventHandler<GestureEventArgs>(swipeGestureRecognized);
 
                 sensor.Open();
                 //irReader.FrameArrived += irReader_FrameArrived;
             }
         }
 
-        private void swipeRightRecognized(object sender, GestureEventArgs e)
+        private void swipeGestureRecognized(object sender, GestureEventArgs e)
         {
-            print("SwipRightRecognized");
+            if (e.GestureType.Equals(GestureType.SwipeLeftGesture))
+            {
+                swipeLeft();
+                return;
+            }
+            if (e.GestureType.Equals(GestureType.SwipeRightGesture))
+            {
+                swipeRight();
+                return;
+            }
         }
 
-        private void Sensor_GestureRecognized(object sender, EventArgs e)
+        private void swipeRight()
         {
-            print("WAVE GESTURE");
+            print("Swipe Right");
+        }
+
+        private void swipeLeft()
+        {
+            print("Swipe Left");
         }
 
         private void Msfr_MultiSourceFrameArrived(MultiSourceFrameReader sender, MultiSourceFrameArrivedEventArgs args)
@@ -122,8 +134,7 @@ namespace ProjectX
                                     if (body.IsTracked)
                                     {
                                         //   detectGesture(body);
-                                        gestureEngine.Body = body;
-                                        gestureEngine.StartRecognize();
+                                        
 
                                         Joint headJoint = body.Joints[JointType.Head];
                                         Joint rightHand = body.Joints[JointType.HandRight];
@@ -135,6 +146,9 @@ namespace ProjectX
                                             Canvas.SetLeft(headCircle, dsp.X - 25);
                                             Canvas.SetTop(headCircle, dsp.Y - 25);
                                         }
+
+                                        gestureEngine.Body = body;
+                                        gestureEngine.StartRecognize();
                                     }
                                 }
                                 /*
