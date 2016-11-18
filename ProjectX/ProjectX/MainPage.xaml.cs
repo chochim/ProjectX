@@ -17,7 +17,7 @@ using WindowsPreview.Kinect;
 using Windows.Storage;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
-
+using Microsoft.VisualBasic;
 using Windows.UI.Xaml.Media.Imaging;
 
 
@@ -60,8 +60,23 @@ namespace ProjectX
         {
             this.InitializeComponent();
             this.Loaded += MainPage_Loaded;
+            this.SizeChanged += OnWindowSizeChanged;
             addImages();
         }
+
+        private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double newWindowHeight = e.NewSize.Height;
+            double newWindowWidth = e.NewSize.Width;
+            double oldWindowHeight = e.PreviousSize.Height;
+            double oldWindowWidth = e.PreviousSize.Width;
+            MPage.Height = newWindowHeight;
+            MPage.Width = newWindowWidth;
+
+            print("Height = " + newWindowHeight);
+            print("Width = " + newWindowWidth);
+        }
+
 
         KinectSensor sensor;
         InfraredFrameReader irReader;
@@ -80,6 +95,7 @@ namespace ProjectX
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             Start();
+            
             Debug.WriteLine(this.ActualHeight);
             Debug.WriteLine(this.ActualWidth);
             OFFSET_FACTOR = this.ActualWidth;
@@ -175,12 +191,14 @@ namespace ProjectX
                             {
                                 if (body.IsTracked)
                                 {
+
                                     if (ifTrackable(body))
                                     {
                                         print("Body is being tracked");
                                         gestureEngine.Body = body;
                                         gestureEngine.StartRecognize();
                                     }
+                                    Body_Tracking_Highlight(ifTrackable(body));
                                 }
                             }
                         }
@@ -349,12 +367,18 @@ namespace ProjectX
             _yCenter = this.ActualHeight / 2;
         }
 
-        private void MainPage_KeyDown(object sender, object e)
+        private void Body_Tracking_Highlight(bool tracked)
         {
-            // If left do left
-
-            // If right do right
-
+            if (tracked)
+            {
+                CanvasBorder.BorderBrush = new SolidColorBrush(Colors.LightGreen);
+                CanvasBorder.BorderThickness = new Thickness(6);
+            } else
+            {
+                CanvasBorder.BorderBrush = new SolidColorBrush(Colors.Red);
+                CanvasBorder.BorderThickness = new Windows.UI.Xaml.Thickness(10);
+            }
+            
         }
 
 
