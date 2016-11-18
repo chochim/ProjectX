@@ -17,7 +17,7 @@ using WindowsPreview.Kinect;
 using Windows.Storage;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
-
+using Microsoft.VisualBasic;
 using Windows.UI.Xaml.Media.Imaging;
 
 
@@ -41,9 +41,11 @@ namespace ProjectX
         private static double OFFSET_FACTOR = 100;      // Distance between images
         private static double OPACITY_DOWN_FACTOR = 0.4;    // Alpha between images
         private static double SCALING;            // Maximum Scale
-
+        private static int TIMER = 4000;//in millieconds
         private static float VIEW_FRUSTUM_Z = 1.5f;
         private static float VIEW_FRUSTUM_X = 0.5f;
+
+        private DispatcherTimer slideshowTimer = new DispatcherTimer();
 
         private double _xCenter;
         private double _yCenter;
@@ -60,8 +62,32 @@ namespace ProjectX
         {
             this.InitializeComponent();
             this.Loaded += MainPage_Loaded;
+            this.SizeChanged += OnWindowSizeChanged;
+            this.slideshowTimer.Interval = TimeSpan.FromMilliseconds(TIMER);
+            this.slideshowTimer.Tick += next_slide;
+            slideshowTimer.Start();
+
             addImages();
         }
+
+        private void next_slide(object sender, object e)
+        {
+            moveIndex(1);
+        }
+
+        private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double newWindowHeight = e.NewSize.Height;
+            double newWindowWidth = e.NewSize.Width;
+            double oldWindowHeight = e.PreviousSize.Height;
+            double oldWindowWidth = e.PreviousSize.Width;
+            MPage.Height = newWindowHeight;
+            MPage.Width = newWindowWidth;
+
+            print("Height = " + newWindowHeight);
+            print("Width = " + newWindowWidth);
+        }
+
 
         KinectSensor sensor;
         InfraredFrameReader irReader;
@@ -80,6 +106,7 @@ namespace ProjectX
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             Start();
+            
             Debug.WriteLine(this.ActualHeight);
             Debug.WriteLine(this.ActualWidth);
             OFFSET_FACTOR = this.ActualWidth;
@@ -175,12 +202,14 @@ namespace ProjectX
                             {
                                 if (body.IsTracked)
                                 {
+
                                     if (ifTrackable(body))
                                     {
                                         print("Body is being tracked");
                                         gestureEngine.Body = body;
                                         gestureEngine.StartRecognize();
                                     }
+                                    Body_Tracking_Highlight(ifTrackable(body));
                                 }
                             }
                         }
@@ -349,12 +378,26 @@ namespace ProjectX
             _yCenter = this.ActualHeight / 2;
         }
 
-        private void MainPage_KeyDown(object sender, object e)
+        private void Body_Tracking_Highlight(bool tracked)
         {
-            // If left do left
-
-            // If right do right
-
+            if (tracked)
+            {
+                CanvasBorder.BorderBrush = new SolidColorBrush(Colors.LightGreen);
+                CanvasBorder.BorderThickness = new Thickness(6);
+                if (slideshowTimer.IsEnabled)
+                {
+                    slideshowTimer.Stop();
+                }
+            } else
+            {
+                CanvasBorder.BorderBrush = new SolidColorBrush(Colors.Red);
+                CanvasBorder.BorderThickness = new Windows.UI.Xaml.Thickness(10);
+                if (!slideshowTimer.IsEnabled)
+                {
+                    slideshowTimer.Start();
+                }
+            }
+            
         }
 
 

@@ -1,19 +1,26 @@
 ﻿<Page
     x:Class="ProjectX.MainPage"
+    x:Name="MPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ProjectX"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Loaded="MainPage_Loaded"
-    mc:Ignorable="d"
-    Width="1920"
-    Height="1080">
+    mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         
-        <Canvas Name="bodyCanvas" Width="1000" Height="1000" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        <Canvas x:Name="LayoutRoot" Background="White" />
+            <Canvas Name="bodyCanvas" Width="1000" Height="1000" HorizontalAlignment="Center" VerticalAlignment="Center" />
+       
+        <Border
+            BorderThickness="10"
+            BorderBrush="Red"
+            x:Name="CanvasBorder"
+            >
+            <Canvas x:Name="LayoutRoot" Background="White" />
+        </Border>
+
     </Grid>
     
 </Page>
