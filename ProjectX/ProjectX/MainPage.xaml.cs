@@ -41,9 +41,11 @@ namespace ProjectX
         private static double OFFSET_FACTOR = 100;      // Distance between images
         private static double OPACITY_DOWN_FACTOR = 0.4;    // Alpha between images
         private static double SCALING;            // Maximum Scale
-
+        private static int TIMER = 4000;//in millieconds
         private static float VIEW_FRUSTUM_Z = 1.5f;
         private static float VIEW_FRUSTUM_X = 0.5f;
+
+        private DispatcherTimer slideshowTimer = new DispatcherTimer();
 
         private double _xCenter;
         private double _yCenter;
@@ -61,7 +63,16 @@ namespace ProjectX
             this.InitializeComponent();
             this.Loaded += MainPage_Loaded;
             this.SizeChanged += OnWindowSizeChanged;
+            this.slideshowTimer.Interval = TimeSpan.FromMilliseconds(TIMER);
+            this.slideshowTimer.Tick += next_slide;
+            slideshowTimer.Start();
+
             addImages();
+        }
+
+        private void next_slide(object sender, object e)
+        {
+            moveIndex(1);
         }
 
         private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
@@ -373,10 +384,18 @@ namespace ProjectX
             {
                 CanvasBorder.BorderBrush = new SolidColorBrush(Colors.LightGreen);
                 CanvasBorder.BorderThickness = new Thickness(6);
+                if (slideshowTimer.IsEnabled)
+                {
+                    slideshowTimer.Stop();
+                }
             } else
             {
                 CanvasBorder.BorderBrush = new SolidColorBrush(Colors.Red);
                 CanvasBorder.BorderThickness = new Windows.UI.Xaml.Thickness(10);
+                if (!slideshowTimer.IsEnabled)
+                {
+                    slideshowTimer.Start();
+                }
             }
             
         }
