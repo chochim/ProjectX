@@ -143,6 +143,26 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Logo.scale-100.png" />
+    <Content Include="Assets\projectx_12.jpg" />
+    <Content Include="Assets\projectx_13.jpg" />
+    <Content Include="Assets\projectx_15.jpg" />
+    <Content Include="Assets\projectx_17.jpg" />
+    <Content Include="Assets\projectx_22.jpg" />
+    <Content Include="Assets\projectx_32.jpg" />
+    <Content Include="Assets\projectx_39.jpg" />
+    <Content Include="Assets\projectx_4.jpg" />
+    <Content Include="Assets\projectx_43.jpg" />
+    <Content Include="Assets\projectx_44.jpg" />
+    <Content Include="Assets\projectx_45.jpg" />
+    <Content Include="Assets\projectx_55.jpg" />
+    <Content Include="Assets\projectx_61.jpg" />
+    <Content Include="Assets\projectx_69.jpg" />
+    <Content Include="Assets\projectx_7.jpg" />
+    <Content Include="Assets\projectx_70.jpg" />
+    <Content Include="Assets\projectx_82.jpg" />
+    <Content Include="Assets\projectx_86.jpg" />
+    <Content Include="Assets\projectx_88.jpg" />
+    <Content Include="Assets\projectx_93.jpg" />
     <Content Include="Assets\SmallLogo.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\StoreLogo.scale-100.png" />
@@ -156,6 +176,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
