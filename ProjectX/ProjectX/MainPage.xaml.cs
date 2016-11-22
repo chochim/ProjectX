@@ -177,8 +177,10 @@ namespace ProjectX
             print("Body y = " + body.Joints[JointType.SpineBase].Position.Y);
             print("Body z = " + body.Joints[JointType.SpineBase].Position.Z);
 
-            return (body.Joints[JointType.SpineBase].Position.X <= VIEW_FRUSTUM_X && body.Joints[JointType.SpineBase].Position.X >= -VIEW_FRUSTUM_X) &&
-                (body.Joints[JointType.SpineBase].Position.Z <= VIEW_FRUSTUM_Z+1 && body.Joints[JointType.SpineBase].Position.Z >= VIEW_FRUSTUM_Z);
+            return (body.Joints[JointType.SpineBase].Position.X <= VIEW_FRUSTUM_X && 
+                    body.Joints[JointType.SpineBase].Position.X >= -VIEW_FRUSTUM_X) &&
+                   (body.Joints[JointType.SpineBase].Position.Z <= VIEW_FRUSTUM_Z+1 && 
+                   body.Joints[JointType.SpineBase].Position.Z >= VIEW_FRUSTUM_Z);
         }
 
         private void Msfr_MultiSourceFrameArrived(MultiSourceFrameReader sender, MultiSourceFrameArrivedEventArgs args)
@@ -194,22 +196,21 @@ namespace ProjectX
                             bodyFrame.GetAndRefreshBodyData(bodies);
                             bodyCanvas.Children.Clear();
 
-                            bodyFrame.GetAndRefreshBodyData(bodies);
-                            bodyCanvas.Children.Clear();
-
-                            //Body body = bodies[0];
                             foreach (Body body in bodies)
                             {
                                 if (body.IsTracked)
                                 {
-
                                     if (ifTrackable(body))
                                     {
                                         print("Body is being tracked");
                                         gestureEngine.Body = body;
                                         gestureEngine.StartRecognize();
-                                    }
+                                    } 
                                     Body_Tracking_Highlight(ifTrackable(body));
+                                }
+                                else
+                                {
+                                    bodies = new Body[6];
                                 }
                             }
                         }
