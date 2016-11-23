@@ -321,7 +321,14 @@ namespace ProjectX
         // move the index
         private void moveIndex(int value)
         {
-            _target = (_target + value) % (_images.Count);
+            print("Target = " + _target);
+            if (value > 0)
+            {
+                _target = (_target + value) % (_images.Count);
+            } else
+            {
+                _target = (_target + _images.Count + value) % (_images.Count);
+            }
         }
 
         // reposition the image
