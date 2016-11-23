@@ -32,7 +32,7 @@ namespace ProjectX
     /// </summary>
     public partial class MainPage : Page
     {
-        private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg", "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg", "projectx_22.jpg", "projectx_32.jpg", "projectx_39.jpg", "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
+        private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg" , "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg", "projectx_22.jpg", "projectx_32.jpg", "projectx_39.jpg", "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
         private static double IMAGE_WIDTH = 128;        // Image Width
         private static double IMAGE_HEIGHT = 128;       // Image Height        
         private static double SPRINESS = 0.2;		    // Control the Spring Speed
@@ -321,9 +321,7 @@ namespace ProjectX
         // move the index
         private void moveIndex(int value)
         {
-            _target += value;
-            _target = Math.Max(0, _target);
-            _target = Math.Min(_images.Count - 1, _target);
+            _target = (_target + value) % (_images.Count);
         }
 
         // reposition the image
