@@ -10,17 +10,44 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        
-            <Canvas Name="bodyCanvas" Width="1000" Height="1000" HorizontalAlignment="Center" VerticalAlignment="Center" />
-       
+
+        <Canvas Name="bodyCanvas" Width="1000" Height="1000" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
         <Border
-            BorderThickness="10"
-            BorderBrush="Red"
+            BorderThickness="8"
+            BorderBrush="OrangeRed"
             x:Name="CanvasBorder"
             >
-            <Canvas x:Name="LayoutRoot" Background="White" />
+            <Canvas x:Name="LayoutRoot" Background="LemonChiffon" />
         </Border>
+        <Canvas Name="Popup" Width="400" Height="150" HorizontalAlignment="Center" VerticalAlignment="Center" Background="WhiteSmoke" Visibility="Collapsed">
+            <TextBlock
+                Height="75"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                
+                Name="Greeting"
+                FontSize="54"
+                Foreground="MediumSeaGreen" Canvas.Left="65" Canvas.Top="50"
+                Visibility="Visible"
+                
+                >
+                Hello 😄
+            </TextBlock>
+            <TextBlock
+                Height="75"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                
+                Name="Goodbye"
+                FontSize="54"
+                Foreground="OrangeRed" Canvas.Left="50" Canvas.Top="50"
+                Visibility="Collapsed"
+                >
+                Good Bye 😉
+            </TextBlock>
+        </Canvas>
 
     </Grid>
-    
+
 </Page>

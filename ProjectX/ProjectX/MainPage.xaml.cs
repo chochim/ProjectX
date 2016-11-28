@@ -41,11 +41,13 @@ namespace ProjectX
         private static double OFFSET_FACTOR = 100;      // Distance between images
         private static double OPACITY_DOWN_FACTOR = 0.4;    // Alpha between images
         private static double SCALING;            // Maximum Scale
-        private static int TIMER = 4000;//in millieconds
+        private static int TIMER = 8000;//in millieconds
         private static float VIEW_FRUSTUM_Z = 1.5f;
         private static float VIEW_FRUSTUM_X = 0.5f;
+        private static int popTIMER = 4000;
 
         private DispatcherTimer slideshowTimer = new DispatcherTimer();
+        private DispatcherTimer popupTimer = new DispatcherTimer();
 
         private double _xCenter;
         private double _yCenter;
@@ -64,6 +66,8 @@ namespace ProjectX
             this.Loaded += MainPage_Loaded;
             this.SizeChanged += OnWindowSizeChanged;
             this.slideshowTimer.Interval = TimeSpan.FromMilliseconds(TIMER);
+            this.popupTimer.Interval = TimeSpan.FromMilliseconds(TIMER);
+            popupTimer.Start();
             this.slideshowTimer.Tick += next_slide;
             slideshowTimer.Start();
 
@@ -73,6 +77,16 @@ namespace ProjectX
         private void next_slide(object sender, object e)
         {
             moveIndex(1);
+        }
+
+        private void pop_in(object sender, object e)
+        {
+            Popup.Visibility = Visibility.Visible;
+            //popupTimer.Stop();
+        }
+        private void pop_out(object sender, object e)
+        {
+            Popup.Visibility = Visibility.Collapsed;
         }
 
         private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
@@ -203,6 +217,7 @@ namespace ProjectX
                                     if (ifTrackable(body))
                                     {
                                         print("Body is being tracked");
+                                        
                                         gestureEngine.Body = body;
                                         gestureEngine.StartRecognize();
                                     } 
@@ -346,7 +361,7 @@ namespace ProjectX
             }
             else
             {
-                SCALING = this.ActualHeight / image.Height;
+                SCALING = this.ActualHeight/ (image.Height) ;
             }
             scaleTransform.ScaleX = SCALING - Math.Abs(diffFactor) * SCALE_DOWN_FACTOR;
             scaleTransform.ScaleY = SCALING - Math.Abs(diffFactor) * SCALE_DOWN_FACTOR;
@@ -360,7 +375,7 @@ namespace ProjectX
             image.Opacity = 1 - Math.Abs(diffFactor) * OPACITY_DOWN_FACTOR;
 
             image.SetValue(Canvas.LeftProperty, left);
-            image.SetValue(Canvas.TopProperty, top);
+            image.SetValue(Canvas.TopProperty, top-8);
 
             // order the element by the scaleX
             image.SetValue(Canvas.ZIndexProperty, (int)Math.Abs(scaleTransform.ScaleX * 100));
@@ -388,23 +403,39 @@ namespace ProjectX
         {
             if (tracked)
             {
-                CanvasBorder.BorderBrush = new SolidColorBrush(Colors.LightGreen);
-                CanvasBorder.BorderThickness = new Thickness(6);
+                CanvasBorder.BorderBrush = new SolidColorBrush(Colors.MediumSeaGreen);
+                //CanvasBorder.BorderThickness = new Thickness(8);
+                LayoutRoot.Background = new SolidColorBrush(Colors.Honeydew);
+                
                 if (slideshowTimer.IsEnabled)
                 {
                     slideshowTimer.Stop();
+                    Popup.Visibility = Visibility.Visible;
+                    Greeting.Visibility = Visibility.Visible;
+                    Goodbye.Visibility = Visibility.Collapsed;
+                    popupTimer.Tick += pop_out;
+                    
                 }
             } else
             {
-                CanvasBorder.BorderBrush = new SolidColorBrush(Colors.Red);
-                CanvasBorder.BorderThickness = new Windows.UI.Xaml.Thickness(10);
+                CanvasBorder.BorderBrush = new SolidColorBrush(Colors.OrangeRed);
+                //CanvasBorder.BorderThickness = new Thickness(8);
+                LayoutRoot.Background = new SolidColorBrush(Colors.LemonChiffon);
+
+
                 if (!slideshowTimer.IsEnabled)
                 {
                     slideshowTimer.Start();
+                    Popup.Visibility = Visibility.Visible;
+                    Greeting.Visibility = Visibility.Collapsed;
+                    Goodbye.Visibility = Visibility.Visible;
+                    popupTimer.Tick += pop_out;
                 }
             }
             
         }
+
+
 
 
 
