@@ -32,7 +32,7 @@ namespace ProjectX
     /// </summary>
     public partial class MainPage : Page
     {
-        private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg" , "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg", "projectx_22.jpg", "projectx_32.jpg", "projectx_39.jpg", "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
+        private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg", "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg", "projectx_22.jpg", "projectx_32.jpg", "projectx_39.jpg", "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
         private static double IMAGE_WIDTH = 128;        // Image Width
         private static double IMAGE_HEIGHT = 128;       // Image Height        
         private static double SPRINESS = 0.2;		    // Control the Spring Speed
@@ -44,6 +44,7 @@ namespace ProjectX
         private static int TIMER = 8000;//in millieconds
         private static float VIEW_FRUSTUM_Z = 1.5f;
         private static float VIEW_FRUSTUM_X = 0.5f;
+
         private static int popTIMER = 4000;
 
         private DispatcherTimer slideshowTimer = new DispatcherTimer();
@@ -66,10 +67,10 @@ namespace ProjectX
             this.Loaded += MainPage_Loaded;
             this.SizeChanged += OnWindowSizeChanged;
             this.slideshowTimer.Interval = TimeSpan.FromMilliseconds(TIMER);
-            this.popupTimer.Interval = TimeSpan.FromMilliseconds(TIMER);
-            popupTimer.Start();
             this.slideshowTimer.Tick += next_slide;
             slideshowTimer.Start();
+            this.popupTimer.Interval = TimeSpan.FromMilliseconds(popTIMER);
+            popupTimer.Start();
 
             addImages();
         }
@@ -79,11 +80,6 @@ namespace ProjectX
             moveIndex(1);
         }
 
-        private void pop_in(object sender, object e)
-        {
-            Popup.Visibility = Visibility.Visible;
-            //popupTimer.Stop();
-        }
         private void pop_out(object sender, object e)
         {
             Popup.Visibility = Visibility.Collapsed;
@@ -120,7 +116,7 @@ namespace ProjectX
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             Start();
-            
+
             Debug.WriteLine(this.ActualHeight);
             Debug.WriteLine(this.ActualWidth);
             OFFSET_FACTOR = this.ActualWidth;
@@ -160,7 +156,7 @@ namespace ProjectX
                 swipeLeft();
                 return;
             }
-            if (e.GestureType.Equals(GestureType.SwipeRightGestureWithRightHand) || 
+            if (e.GestureType.Equals(GestureType.SwipeRightGestureWithRightHand) ||
                 e.GestureType.Equals(GestureType.SwipeRightGestureWithLeftHand))
             {
                 swipeRight();
@@ -191,9 +187,9 @@ namespace ProjectX
             print("Body y = " + body.Joints[JointType.SpineBase].Position.Y);
             print("Body z = " + body.Joints[JointType.SpineBase].Position.Z);
 
-            return (body.Joints[JointType.SpineBase].Position.X <= VIEW_FRUSTUM_X && 
+            return (body.Joints[JointType.SpineBase].Position.X <= VIEW_FRUSTUM_X &&
                     body.Joints[JointType.SpineBase].Position.X >= -VIEW_FRUSTUM_X) &&
-                   (body.Joints[JointType.SpineBase].Position.Z <= VIEW_FRUSTUM_Z+1 && 
+                   (body.Joints[JointType.SpineBase].Position.Z <= VIEW_FRUSTUM_Z + 1 &&
                    body.Joints[JointType.SpineBase].Position.Z >= VIEW_FRUSTUM_Z);
         }
 
@@ -217,10 +213,9 @@ namespace ProjectX
                                     if (ifTrackable(body))
                                     {
                                         print("Body is being tracked");
-                                        
                                         gestureEngine.Body = body;
                                         gestureEngine.StartRecognize();
-                                    } 
+                                    }
                                     Body_Tracking_Highlight(ifTrackable(body));
                                 }
                                 else
@@ -300,10 +295,10 @@ namespace ProjectX
             }
         }
 
-        private async void loadImage(Image image,String url)
+        private async void loadImage(Image image, String url)
         {
 
-            StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/"+url));
+            StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/" + url));
             using (IRandomAccessStream fileStream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
             {
                 BitmapImage im = new BitmapImage();
@@ -340,7 +335,8 @@ namespace ProjectX
             if (value > 0)
             {
                 _target = (_target + value) % (_images.Count);
-            } else
+            }
+            else
             {
                 _target = (_target + _images.Count + value) % (_images.Count);
             }
@@ -361,7 +357,7 @@ namespace ProjectX
             }
             else
             {
-                SCALING = this.ActualHeight/ (image.Height) ;
+                SCALING = this.ActualHeight / image.Height;
             }
             scaleTransform.ScaleX = SCALING - Math.Abs(diffFactor) * SCALE_DOWN_FACTOR;
             scaleTransform.ScaleY = SCALING - Math.Abs(diffFactor) * SCALE_DOWN_FACTOR;
@@ -375,7 +371,7 @@ namespace ProjectX
             image.Opacity = 1 - Math.Abs(diffFactor) * OPACITY_DOWN_FACTOR;
 
             image.SetValue(Canvas.LeftProperty, left);
-            image.SetValue(Canvas.TopProperty, top-8);
+            image.SetValue(Canvas.TopProperty, top);
 
             // order the element by the scaleX
             image.SetValue(Canvas.ZIndexProperty, (int)Math.Abs(scaleTransform.ScaleX * 100));
@@ -391,7 +387,7 @@ namespace ProjectX
             // start the enter frame event
             _timer = new DispatcherTimer();
             _timer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / FPS);
-            _timer.Tick +=  new EventHandler<object>(_timer_Tick);
+            _timer.Tick += new EventHandler<object>(_timer_Tick);
             _timer.Start();
 
             // Save the center position
@@ -406,7 +402,6 @@ namespace ProjectX
                 CanvasBorder.BorderBrush = new SolidColorBrush(Colors.MediumSeaGreen);
                 //CanvasBorder.BorderThickness = new Thickness(8);
                 LayoutRoot.Background = new SolidColorBrush(Colors.Honeydew);
-                
                 if (slideshowTimer.IsEnabled)
                 {
                     slideshowTimer.Stop();
@@ -414,15 +409,13 @@ namespace ProjectX
                     Greeting.Visibility = Visibility.Visible;
                     Goodbye.Visibility = Visibility.Collapsed;
                     popupTimer.Tick += pop_out;
-                    
                 }
-            } else
+            }
+            else
             {
                 CanvasBorder.BorderBrush = new SolidColorBrush(Colors.OrangeRed);
                 //CanvasBorder.BorderThickness = new Thickness(8);
                 LayoutRoot.Background = new SolidColorBrush(Colors.LemonChiffon);
-
-
                 if (!slideshowTimer.IsEnabled)
                 {
                     slideshowTimer.Start();
@@ -432,10 +425,8 @@ namespace ProjectX
                     popupTimer.Tick += pop_out;
                 }
             }
-            
+
         }
-
-
 
 
 

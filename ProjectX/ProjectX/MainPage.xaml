@@ -20,7 +20,7 @@
             >
             <Canvas x:Name="LayoutRoot" Background="LemonChiffon" />
         </Border>
-        <Canvas Name="Popup" Width="400" Height="150" HorizontalAlignment="Center" VerticalAlignment="Center" Background="WhiteSmoke" Visibility="Collapsed">
+        <Canvas Name="Popup" Width="400" Height="150" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="WhiteSmoke" Visibility="Collapsed">
             <TextBlock
                 Height="75"
                 HorizontalAlignment="Center"
