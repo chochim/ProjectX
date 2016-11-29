@@ -66,7 +66,7 @@ namespace ProjectX
             var shoulderLeftPosition = body.Joints[JointType.ShoulderLeft].Position;
             var spinePosition = body.Joints[JointType.SpineMid].Position;
 
-            if ((handLeftPosition.Y < shoulderLeftPosition.Y) &&
+            if (//(handLeftPosition.Y < shoulderLeftPosition.Y) &&
                  (handLeftPosition.Y > body.Joints[JointType.ElbowLeft].Position.Y) &&
                  handRightPoisition.Y < spinePosition.Y)
             {
