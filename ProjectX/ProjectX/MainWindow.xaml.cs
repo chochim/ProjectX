@@ -419,12 +419,12 @@ namespace ProjectX
                 // get the image resources from the xap
                 string url = IMAGES[i];
                 Image image = new Image();
-                var path = System.IO.Path.Combine("C:/Users/at767/Source/Repos/ProjectX/ProjectX/ProjectX/Assets", url);
+                var path = System.IO.Path.Combine("C:/Users/Jack/Source/Repos/ProjectX/ProjectX/ProjectX/Assets", url);
                 print(path.ToString());
                 Uri uri = new Uri(path);
                 print(uri.ToString());
                 //BitmapImage im = new BitmapImage(uri);
-                BitmapImage im =  new BitmapImage(new Uri("C:/Users/at767/Source/Repos/ProjectX/ProjectX/ProjectX/Assets/"+ url, UriKind.Absolute));
+                BitmapImage im =  new BitmapImage(new Uri("C:/Users/Jack/Source/Repos/ProjectX/ProjectX/ProjectX/Assets/"+ url, UriKind.Absolute));
                 image.Source = im;
 
                 image.Height = im.Height;

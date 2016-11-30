@@ -134,9 +134,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\greyscale.png" />
     <Resource Include="Assets\Logo.scale-100.png" />
-    <Resource Include="Assets\meh.png" />
     <Resource Include="Assets\projectx_12.jpg" />
     <Resource Include="Assets\projectx_13.jpg" />
     <Resource Include="Assets\projectx_15.jpg" />
@@ -160,11 +158,6 @@
     <Resource Include="Assets\SmallLogo.scale-100.png" />
     <Resource Include="Assets\SplashScreen.scale-100.png" />
     <Resource Include="Assets\StoreLogo.scale-100.png" />
-    <Resource Include="Assets\straightgrey.png" />
-    <Resource Include="Assets\straightwhite.png" />
-    <Resource Include="Assets\whiteblue.png" />
-    <Resource Include="Assets\winner.png" />
-    <Resource Include="Assets\withblue.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
