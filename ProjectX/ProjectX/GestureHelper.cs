@@ -1,5 +1,5 @@
-﻿using System;
-using WindowsPreview.Kinect;
+﻿using Microsoft.Kinect;
+using System;
 
 namespace ProjectX
 {

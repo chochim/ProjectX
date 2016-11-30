@@ -1,42 +1,42 @@
-﻿using System;
+﻿using Microsoft.Kinect;
+using Microsoft.Speech.AudioFormat;
+using Microsoft.Speech.Recognition;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Windows;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using WindowsPreview.Kinect;
-using Windows.Storage;
-using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
-using Microsoft.VisualBasic;
-using Windows.UI.Xaml.Media.Imaging;
-
-
-using Windows.UI.Xaml.Shapes;
-using Windows.UI;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Threading;
+using System.Drawing;
+using Microsoft.Kinect.Wpf.Controls;
+using Microsoft.Kinect.Toolkit;
+
 
 namespace ProjectX
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainPage : Page
+    public partial class MainWindow : Window
     {
-        private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg", "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg", "projectx_22.jpg", "projectx_32.jpg", "projectx_39.jpg", "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
+        
+        private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg", "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg" };//, "projectx_22.jpg", "projectx_32.jpg", "projectx_39.jpg" };//, "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
+        private string[] NAMES = { "alzheimer", "bailey", "bethe", "blackwell", "bolton", "buck" };
         private static double IMAGE_WIDTH = 128;        // Image Width
         private static double IMAGE_HEIGHT = 128;       // Image Height        
-        private static double SPRINESS = 0.2;		    // Control the Spring Speed
-        private static double DECAY = 0.5;			    // Control the bounce Speed
+        private static double SPRINESS = 0.15;		    // Control the Spring Speed
+        private static double DECAY = 0.25;			    // Control the bounce Speed
         private static double SCALE_DOWN_FACTOR = 0.025;  // Scale between images
         private static double OFFSET_FACTOR = 100;      // Distance between images
         private static double OPACITY_DOWN_FACTOR = 0.4;    // Alpha between images
@@ -45,10 +45,29 @@ namespace ProjectX
         private static float VIEW_FRUSTUM_Z = 1.5f;
         private static float VIEW_FRUSTUM_X = 0.5f;
 
+        static bool isSpeechEnabled = true;
+
         private static int popTIMER = 4000;
 
         private DispatcherTimer slideshowTimer = new DispatcherTimer();
         private DispatcherTimer popupTimer = new DispatcherTimer();
+
+        //Speech
+        /// <summary>
+        /// Stream for 32b-16b conversion.
+        /// </summary>
+        private KinectAudioStream convertStream = null;
+
+        /// <summary>
+        /// Speech recognition engine using audio data from Kinect.
+        /// </summary>
+        private SpeechRecognitionEngine speechEngine = null;
+
+
+        /// <summary>
+        /// List of all UI span elements used to select recognized text.
+        /// </summary>
+        private List<Span> recognitionSpans;
 
         private double _xCenter;
         private double _yCenter;
@@ -58,13 +77,15 @@ namespace ProjectX
         private double _spring = 0;		// Temp used to store last moving 
         private List<Image> _images = new List<Image>();	// Store the added images
 
-        private static int FPS = 24;                // fps of the on enter frame event
+        private static int FPS = 30;                // fps of the on enter frame event
         private DispatcherTimer _timer = new DispatcherTimer(); // on enter frame simulator
 
-        public MainPage()
+       
+
+        public MainWindow()
         {
             this.InitializeComponent();
-            this.Loaded += MainPage_Loaded;
+            this.Loaded += MainWindow_Loaded;
             this.SizeChanged += OnWindowSizeChanged;
             this.slideshowTimer.Interval = TimeSpan.FromMilliseconds(TIMER);
             this.slideshowTimer.Tick += next_slide;
@@ -73,6 +94,36 @@ namespace ProjectX
             popupTimer.Start();
 
             addImages();
+        }
+
+
+        private static RecognizerInfo TryGetKinectRecognizer()
+        {
+            IEnumerable<RecognizerInfo> recognizers;
+
+            // This is required to catch the case when an expected recognizer is not installed.
+            // By default - the x86 Speech Runtime is always expected. 
+            try
+            {
+                recognizers = SpeechRecognitionEngine.InstalledRecognizers();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            foreach (RecognizerInfo recognizer in recognizers)
+            {
+                string value;
+                recognizer.AdditionalInfo.TryGetValue("Kinect", out value);
+                if ("True".Equals(value, StringComparison.OrdinalIgnoreCase) &&
+                    "en-US".Equals(recognizer.Culture.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return recognizer;
+                }
+            }
+
+            return null;
         }
 
         private void next_slide(object sender, object e)
@@ -91,8 +142,8 @@ namespace ProjectX
             double newWindowWidth = e.NewSize.Width;
             double oldWindowHeight = e.PreviousSize.Height;
             double oldWindowWidth = e.PreviousSize.Width;
-            MPage.Height = newWindowHeight;
-            MPage.Width = newWindowWidth;
+            MWindow.Height = newWindowHeight;
+            MWindow.Width = newWindowWidth;
 
             print("Height = " + newWindowHeight);
             print("Width = " + newWindowWidth);
@@ -113,7 +164,7 @@ namespace ProjectX
         GestureRecognitionEngine gestureEngine;
 
 
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Start();
 
@@ -123,24 +174,65 @@ namespace ProjectX
             sensor = KinectSensor.GetDefault();
             if (sensor != null)
             {
-                irReader = sensor.InfraredFrameSource.OpenReader();
-                FrameDescription fd = sensor.InfraredFrameSource.FrameDescription;
-                irData = new ushort[fd.LengthInPixels];
-                irDataConverted = new byte[fd.LengthInPixels * 4];
-                irBitmap = new WriteableBitmap(fd.Width, fd.Height);
-                //image.Source = irBitmap;
 
                 bodies = new Body[6];
-                msfr = sensor.OpenMultiSourceFrameReader(FrameSourceTypes.Body);// | FrameSourceTypes.Infrared);
-                msfr.MultiSourceFrameArrived += Msfr_MultiSourceFrameArrived;
-
-
+                msfr = sensor.OpenMultiSourceFrameReader(FrameSourceTypes.Body);
+                msfr.MultiSourceFrameArrived += FrameArrived;
                 gestureEngine = new GestureRecognitionEngine();
                 gestureEngine.GestureRecognized += new EventHandler<GestureEventArgs>(swipeGestureRecognized);
 
                 sensor.Open();
-                //irReader.FrameArrived += irReader_FrameArrived;
+
+                // grab the audio stream
+                IReadOnlyList<AudioBeam> audioBeamList = sensor.AudioSource.AudioBeams;
+                Stream audioStream = (Stream)audioBeamList[0].OpenInputStream();
+
+                // create the convert stream
+                convertStream = new KinectAudioStream(audioStream);
+
+                setupSpeechRecognition();
+                
             }
+        }
+
+        private void FrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
+        {
+            MultiSourceFrame msf = e.FrameReference.AcquireFrame();
+           
+                if (msf != null)
+                {
+                    using (BodyFrame bodyFrame = msf.BodyFrameReference.AcquireFrame())
+                    {
+                        if (bodyFrame != null)
+                        {
+                            bodyFrame.GetAndRefreshBodyData(bodies);
+                            bodyCanvas.Children.Clear();
+
+                            foreach (Body body in bodies)
+                            {
+                                if (body.IsTracked)
+                                {
+                                    if (ifTrackable(body))
+                                    {
+                                        //isSpeechEnabled = true;
+                                        gestureEngine.Body = body;
+                                        gestureEngine.StartRecognize();
+                                    }
+                                    Body_Tracking_Highlight(ifTrackable(body));
+                                }
+                                else
+                                {
+                                    //isSpeechEnabled = false;
+                                    bodies = new Body[6];
+                                }
+                            }
+                        }
+                    }
+                } else
+            {
+                return;
+            }
+            
         }
 
         /// <summary>
@@ -183,9 +275,9 @@ namespace ProjectX
         /// <returns></returns>
         private bool ifTrackable(Body body)
         {
-            print("Body x = " + body.Joints[JointType.SpineBase].Position.X);
+            /*print("Body x = " + body.Joints[JointType.SpineBase].Position.X);
             print("Body y = " + body.Joints[JointType.SpineBase].Position.Y);
-            print("Body z = " + body.Joints[JointType.SpineBase].Position.Z);
+            print("Body z = " + body.Joints[JointType.SpineBase].Position.Z);*/
 
             return (body.Joints[JointType.SpineBase].Position.X <= VIEW_FRUSTUM_X &&
                     body.Joints[JointType.SpineBase].Position.X >= -VIEW_FRUSTUM_X) &&
@@ -193,41 +285,91 @@ namespace ProjectX
                    body.Joints[JointType.SpineBase].Position.Z >= VIEW_FRUSTUM_Z);
         }
 
-        private void Msfr_MultiSourceFrameArrived(MultiSourceFrameReader sender, MultiSourceFrameArrivedEventArgs args)
+        private Choices getSpeechChoices()
         {
-            using (MultiSourceFrame msf = args.FrameReference.AcquireFrame())
+            var directions = new Choices();
+            for (int i = 0; i < NAMES.Length; ++i)
             {
-                if (msf != null)
-                {
-                    using (BodyFrame bodyFrame = msf.BodyFrameReference.AcquireFrame())
-                    {
-                        if (bodyFrame != null)
-                        {
-                            bodyFrame.GetAndRefreshBodyData(bodies);
-                            bodyCanvas.Children.Clear();
+                directions.Add(new SemanticResultValue(NAMES[i].ToLower(), NAMES[i].ToUpper()));
+            }
 
-                            foreach (Body body in bodies)
-                            {
-                                if (body.IsTracked)
-                                {
-                                    if (ifTrackable(body))
-                                    {
-                                        print("Body is being tracked");
-                                        gestureEngine.Body = body;
-                                        gestureEngine.StartRecognize();
-                                    }
-                                    Body_Tracking_Highlight(ifTrackable(body));
-                                }
-                                else
-                                {
-                                    bodies = new Body[6];
-                                }
-                            }
-                        }
+            return directions;
+        }
+
+        private void setupSpeechRecognition()
+        {
+            RecognizerInfo ri = TryGetKinectRecognizer();
+
+            if (null != ri)
+            {
+                this.speechEngine = new SpeechRecognitionEngine(ri.Id);
+
+                var directions = getSpeechChoices();
+
+                var gb = new GrammarBuilder { Culture = ri.Culture };
+                gb.Append(directions);
+
+                var g = new Grammar(gb);
+
+                this.speechEngine.LoadGrammar(g);
+
+                this.speechEngine.SpeechRecognized += this.SpeechRecognized;
+
+                // let the convertStream know speech is going active
+                this.convertStream.SpeechActive = true;
+
+                // For long recognition sessions (a few hours or more), it may be beneficial to turn off adaptation of the acoustic model. 
+                // This will prevent recognition accuracy from degrading over time.
+                ////speechEngine.UpdateRecognizerSetting("AdaptationOn", 0);
+
+                this.speechEngine.SetInputToAudioStream(
+                    this.convertStream, new SpeechAudioFormatInfo(EncodingFormat.Pcm, 16000, 16, 1, 32000, 2, null));
+                this.speechEngine.RecognizeAsync(RecognizeMode.Multiple);
+            }
+            else
+            {
+                print("Speech Recognition not present");
+            }
+        }
+
+        private void SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            print("Recognized");
+            // isSpeechEnabled = true;
+            print(" isSpeechEnabled? " + isSpeechEnabled);
+            if (isSpeechEnabled)
+            {
+                // Speech utterance confidence below which we treat speech as if it hadn't been heard
+                const double ConfidenceThreshold = 0.3;
+
+                Debug.WriteLine("\nConfidence = " + e.Result.Confidence);
+                Debug.WriteLine("Speech = " + e.Result.Semantics.Value.ToString() + "\n");
+                //Show_Name(e.Result.Semantics.Value.ToString());
+                if (e.Result.Confidence >= ConfidenceThreshold)
+                {
+                    int index = findName(e.Result.Semantics.Value.ToString());
+                    if (index != -1)
+                    {
+                        print("Found");
+                        moveToIndex(index);
+                        
                     }
                 }
             }
         }
+
+        private int findName(string v)
+        {
+            for (int i = 0; i < NAMES.Length; ++i)
+            {
+                if (v.ToUpper().Equals(NAMES[i].ToUpper()))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
 
         /// <summary>
         /// Writes the debug statement to the console
@@ -276,37 +418,26 @@ namespace ProjectX
             {
                 // get the image resources from the xap
                 string url = IMAGES[i];
-
-                try
-                {
-                    Image image = new Image();
-                    print(url + " exists");
-                    loadImage(image, url);
-                    // add and reposition the image
-                    LayoutRoot.Children.Add(image);
-                    posImage(image, i);
-                    _images.Add(image);
-                }
-                catch (FileNotFoundException)
-                {
-                    print(url + " does not exists");
-                }
-
-            }
-        }
-
-        private async void loadImage(Image image, String url)
-        {
-
-            StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/" + url));
-            using (IRandomAccessStream fileStream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
-            {
-                BitmapImage im = new BitmapImage();
-                im.SetSource(fileStream);
+                Image image = new Image();
+                var path = System.IO.Path.Combine("C:/Users/at767/Source/Repos/ProjectX/ProjectX/ProjectX/Assets", url);
+                print(path.ToString());
+                Uri uri = new Uri(path);
+                print(uri.ToString());
+                //BitmapImage im = new BitmapImage(uri);
+                BitmapImage im =  new BitmapImage(new Uri("C:/Users/at767/Source/Repos/ProjectX/ProjectX/ProjectX/Assets/"+ url, UriKind.Absolute));
                 image.Source = im;
-                image.Height = im.PixelHeight;
-                image.Width = im.PixelWidth;
-                Debug.WriteLine(image.Height);
+
+                image.Height = im.Height;
+                image.Width = im.Width;
+                if(im==null)
+                {
+                   print("NULL img");
+                }
+
+                // add and reposition the image 
+                LayoutRoot.Children.Add(image);
+                posImage(image, i);
+                _images.Add(image);
 
             }
         }
@@ -335,6 +466,19 @@ namespace ProjectX
             if (value > 0)
             {
                 _target = (_target + value) % (_images.Count);
+            }
+            else
+            {
+                _target = (_target + _images.Count + value) % (_images.Count);
+            }
+        }
+
+        private void moveToIndex(int value)
+        {
+            print("Target = " + _target);
+            if (value > 0)
+            {
+                _target = value;
             }
             else
             {
@@ -377,6 +521,19 @@ namespace ProjectX
             image.SetValue(Canvas.ZIndexProperty, (int)Math.Abs(scaleTransform.ScaleX * 100));
         }
 
+        private void Show_Name(string name)
+        {
+            Name_Pop.Visibility = Visibility.Visible;
+            Name_Text.Text = name;
+        }
+
+        private void Hide_Name()
+        {
+            Name_Pop.Visibility = Visibility.Collapsed;
+            Name_Text.Text = "";
+
+        }
+
         /////////////////////////////////////////////////////        
         // Public Methods
         /////////////////////////////////////////////////////	
@@ -387,7 +544,7 @@ namespace ProjectX
             // start the enter frame event
             _timer = new DispatcherTimer();
             _timer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / FPS);
-            _timer.Tick += new EventHandler<object>(_timer_Tick);
+            _timer.Tick += new EventHandler(_timer_Tick);
             _timer.Start();
 
             // Save the center position
@@ -399,6 +556,7 @@ namespace ProjectX
         {
             if (tracked)
             {
+                isSpeechEnabled = true;
                 CanvasBorder.BorderBrush = new SolidColorBrush(Colors.MediumSeaGreen);
                 //CanvasBorder.BorderThickness = new Thickness(8);
                 LayoutRoot.Background = new SolidColorBrush(Colors.Honeydew);
@@ -413,6 +571,7 @@ namespace ProjectX
             }
             else
             {
+                isSpeechEnabled = false;
                 CanvasBorder.BorderBrush = new SolidColorBrush(Colors.OrangeRed);
                 //CanvasBorder.BorderThickness = new Thickness(8);
                 LayoutRoot.Background = new SolidColorBrush(Colors.LemonChiffon);
@@ -428,8 +587,6 @@ namespace ProjectX
 
         }
 
-
-
     }
-
+    
 }

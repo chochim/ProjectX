@@ -1,0 +1,49 @@
+﻿<grammar version="1.0" xml:lang="en-US" root="rootRule" tag-format="semantics/1.0-literals" xmlns="http://www.w3.org/2001/06/grammar">
+  <rule id="rootRule">
+    <one-of>
+      <!--
+      <item>
+        <tag>FRANKLIN</tag>
+        <one-of>
+          <item> franklin </item>
+        </one-of>
+      </item>-->
+      <item>
+        <tag>BAILEY</tag>
+        <one-of>
+          <item> bailey </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>BUCK</tag>
+        <one-of>
+          <item> buck </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>BOLTON</tag>
+        <one-of>
+         <item> bolton</item>
+        </one-of>
+      </item>
+      <item>
+        <tag>ALZHEIMER</tag>
+        <one-of>
+          <item> alzheimer </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>BETHE</tag>
+        <one-of>
+          <item> bethe </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>BLACKWELL</tag>
+        <one-of>
+          <item> blackwell </item>
+        </one-of>
+      </item>
+    </one-of>
+  </rule>
+</grammar>
