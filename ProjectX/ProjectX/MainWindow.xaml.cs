@@ -41,8 +41,8 @@ namespace ProjectX
         private static double OPACITY_DOWN_FACTOR = 0.4;    // Alpha between images
         private static double SCALING;            // Maximum Scale
         private static int TIMER = 8000;//in millieconds
-        private static float VIEW_FRUSTUM_Z = 1.5f;
-        private static float VIEW_FRUSTUM_X = 0.5f;
+        private static float VIEW_FRUSTUM_Z = 1.8f;
+        private static float VIEW_FRUSTUM_X = 0.25f;
 
         static bool isSpeechEnabled = true;
 
@@ -206,7 +206,7 @@ namespace ProjectX
                         {
                             bodyFrame.GetAndRefreshBodyData(bodies);
                             bodyCanvas.Children.Clear();
-
+                            bool sweetSpot = false;
                             foreach (Body body in bodies)
                             {
                                 if (body.IsTracked)
@@ -216,17 +216,20 @@ namespace ProjectX
                                         //isSpeechEnabled = true;
                                         gestureEngine.Body = body;
                                         gestureEngine.StartRecognize();
+                                        sweetSpot = true;
                                     }
-                                    Body_Tracking_Highlight(ifTrackable(body));
+                                    
                                 }
                                 else
                                 {
                                     //isSpeechEnabled = false;
                                     bodies = new Body[6];
-                                }
+                                //Body_Tracking_Highlight(false);
                             }
-                        }
+                            }
+                            Body_Tracking_Highlight(sweetSpot);
                     }
+                }
                 } else
             {
                 return;
@@ -280,7 +283,7 @@ namespace ProjectX
 
             return (body.Joints[JointType.SpineBase].Position.X <= VIEW_FRUSTUM_X &&
                     body.Joints[JointType.SpineBase].Position.X >= -VIEW_FRUSTUM_X) &&
-                   (body.Joints[JointType.SpineBase].Position.Z <= VIEW_FRUSTUM_Z + 1 &&
+                   (body.Joints[JointType.SpineBase].Position.Z <= VIEW_FRUSTUM_Z + 0.5 &&
                    body.Joints[JointType.SpineBase].Position.Z >= VIEW_FRUSTUM_Z);
         }
 
