@@ -21,7 +21,7 @@ using System.Windows.Threading;
 using System.Drawing;
 using Microsoft.Kinect.Wpf.Controls;
 using Microsoft.Kinect.Toolkit;
-
+using System.Reflection;
 
 namespace ProjectX
 {
@@ -424,7 +424,8 @@ namespace ProjectX
                 Uri uri = new Uri(path);
                 print(uri.ToString());
                 //BitmapImage im = new BitmapImage(uri);
-                BitmapImage im =  new BitmapImage(new Uri("C:/Users/Jack/Source/Repos/ProjectX/ProjectX/ProjectX/Assets/"+ url, UriKind.Absolute));
+                string workingDirectory = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName).ToString();
+                BitmapImage im =  new BitmapImage(new Uri(workingDirectory + "\\Assets\\" + url, UriKind.Absolute));
                 image.Source = im;
 
                 image.Height = im.Height;
