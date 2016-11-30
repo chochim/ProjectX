@@ -67,8 +67,8 @@ namespace ProjectX
             var spinePosition = body.Joints[JointType.SpineMid].Position;
 
             if (//(handLeftPosition.Y < shoulderLeftPosition.Y) &&
-                 (handLeftPosition.Y > body.Joints[JointType.ElbowLeft].Position.Y) &&
-                 handRightPoisition.Y < spinePosition.Y)
+                 (handLeftPosition.Y > body.Joints[JointType.ElbowLeft].Position.Y) /*&&
+                 handRightPoisition.Y < spinePosition.Y*/)
             {
                 shoulderDiff = GestureHelper.GetJointDistance(body.Joints[JointType.HandLeft],
                                                                 body.Joints[JointType.ShoulderRight]);

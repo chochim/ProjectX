@@ -20,7 +20,6 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Drawing;
 using Microsoft.Kinect.Wpf.Controls;
-using Microsoft.Kinect.Toolkit;
 using System.Reflection;
 
 namespace ProjectX
@@ -340,7 +339,7 @@ namespace ProjectX
             if (isSpeechEnabled)
             {
                 // Speech utterance confidence below which we treat speech as if it hadn't been heard
-                const double ConfidenceThreshold = 0.3;
+                const double ConfidenceThreshold = 0.6;
 
                 Debug.WriteLine("\nConfidence = " + e.Result.Confidence);
                 Debug.WriteLine("Speech = " + e.Result.Semantics.Value.ToString() + "\n");
@@ -476,15 +475,19 @@ namespace ProjectX
 
         private void moveToIndex(int value)
         {
+            if (!(_target==value)) {
+
+            }
             print("Target = " + _target);
-            if (value > 0)
+            moveIndex(value-(int)_target);
+            /*if (value > 0)
             {
                 _target = value;
             }
             else
             {
-                _target = (_target + _images.Count + value) % (_images.Count);
-            }
+                print("Negative index given");
+            }*/
         }
 
         // reposition the image
