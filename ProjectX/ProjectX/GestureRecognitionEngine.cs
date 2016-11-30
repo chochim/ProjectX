@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Kinect;
+using System;
 using System.Collections.Generic;
-using WindowsPreview.Kinect;
 
 namespace ProjectX
 {
