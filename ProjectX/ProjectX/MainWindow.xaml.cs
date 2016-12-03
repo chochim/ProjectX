@@ -95,6 +95,35 @@ namespace ProjectX
             addImages();
         }
 
+        /// <summary>
+        /// 
+        /// Takes a index and returns the time interval for that particular file
+        /// "projectx_7.jpg" -> returns 7
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public int getTimeInterval(int index)
+        {
+            string fileName = IMAGES[index];
+            string[] words = fileName.Split('_'); 
+            if (words.Length==1)
+            {
+                return TIMER;
+            }
+
+            string delaystr = words[1];
+            string[] parts = delaystr.Split('.');
+            if( parts.Length==1)
+            {
+                return TIMER;
+            }
+            int delay = TIMER;
+            if( Int32.TryParse(parts[0], out delay))
+            {
+                return delay;
+            }
+            return delay;
+        }
 
         private static RecognizerInfo TryGetKinectRecognizer()
         {
@@ -427,7 +456,7 @@ namespace ProjectX
                 print(uri.ToString());
                 //BitmapImage im = new BitmapImage(uri);
                 string workingDirectory = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName).ToString();
-                BitmapImage im =  new BitmapImage(new Uri(workingDirectory + "\\Assets\\" + url, UriKind.Absolute));
+                BitmapImage im =  new BitmapImage(new Uri(workingDirectory + "\\ProjectX\\Assets\\" + url, UriKind.Absolute));
                 image.Source = im;
 
                 image.Height = im.Height;
@@ -445,26 +474,10 @@ namespace ProjectX
             }
         }
 
-        // Takes image and returns the width of the image
-        private double getImageWidth(Image image)
-        {
-            return 800;
-        }
-
-        // Takes image and returns the height of the image
-        private double getImageHeight(Image image)
-        {
-            return 800;
-        }
-
-        private double getImageScale(double width, double height)
-        {
-            return 0.4;
-        }
-
         // move the index
         private void moveIndex(int value)
         {
+            
             print("Target = " + _target);
             if (value > 0)
             {
@@ -474,6 +487,12 @@ namespace ProjectX
             {
                 _target = (_target + _images.Count + value) % (_images.Count);
             }
+            int moveToIndx = (int)_target;
+            print("image time: "+getTimeInterval(moveToIndx));
+            this.slideshowTimer.Stop();
+            this.slideshowTimer.Interval = TimeSpan.FromMilliseconds(1000*getTimeInterval(moveToIndx));
+            this.slideshowTimer.Start();
+
         }
 
         private void moveToIndex(int value)
@@ -483,14 +502,6 @@ namespace ProjectX
             }
             print("Target = " + _target);
             moveIndex(value-(int)_target);
-            /*if (value > 0)
-            {
-                _target = value;
-            }
-            else
-            {
-                print("Negative index given");
-            }*/
         }
 
         // reposition the image
