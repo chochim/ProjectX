@@ -31,7 +31,6 @@ namespace ProjectX
     {
         public string[] IMAGES = new string[98];
         public string[] NAMES = new string[98];
-
         //private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg", "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg" };//, "projectx_22.jpg", "projectx_32.jpg", "projectx_39.jpg" };//, "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
         //private string[] NAMES = { "alzheimer", "bailey", "bethe", "blackwell", "bolton", "buck" };
         private static double IMAGE_WIDTH = 128;        // Image Width
