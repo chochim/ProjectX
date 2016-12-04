@@ -29,13 +29,13 @@ namespace ProjectX
     /// </summary>
     public partial class MainWindow : Window
     {
-        
-        private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg", "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg" };//, "projectx_22.jpg", "projectx_32.jpg", "projectx_39.jpg" };//, "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
-        private string[] NAMES = { "alzheimer", "bailey", "bethe", "blackwell", "bolton", "buck" };
+
+        private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg", "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg", "projectx_22.jpg" };//, "projectx_32.jpg", "projectx_39.jpg" };//, "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
+        private string[] NAMES = { "alzheimer", "bailey", "bethe", "blackwell", "bolton", "buck", "cerrache" };
         private static double IMAGE_WIDTH = 128;        // Image Width
         private static double IMAGE_HEIGHT = 128;       // Image Height        
-        private static double SPRINESS = 0.15;		    // Control the Spring Speed
-        private static double DECAY = 0.25;			    // Control the bounce Speed
+        private static double SPRINESS = 0.15;          // Control the Spring Speed
+        private static double DECAY = 0.25;             // Control the bounce Speed
         private static double SCALE_DOWN_FACTOR = 0.025;  // Scale between images
         private static double OFFSET_FACTOR = 100;      // Distance between images
         private static double OPACITY_DOWN_FACTOR = 0.4;    // Alpha between images
@@ -71,15 +71,15 @@ namespace ProjectX
         private double _xCenter;
         private double _yCenter;
 
-        private double _target = 0;		// Target moving position
-        private double _current = 0;	// Current position
-        private double _spring = 0;		// Temp used to store last moving 
-        private List<Image> _images = new List<Image>();	// Store the added images
+        private double _target = 0;     // Target moving position
+        private double _current = 0;    // Current position
+        private double _spring = 0;     // Temp used to store last moving 
+        private List<Image> _images = new List<Image>();    // Store the added images
 
         private static int FPS = 30;                // fps of the on enter frame event
         private DispatcherTimer _timer = new DispatcherTimer(); // on enter frame simulator
 
-       
+
 
         public MainWindow()
         {
@@ -105,20 +105,20 @@ namespace ProjectX
         public int getTimeInterval(int index)
         {
             string fileName = IMAGES[index];
-            string[] words = fileName.Split('_'); 
-            if (words.Length==1)
+            string[] words = fileName.Split('_');
+            if (words.Length == 1)
             {
                 return TIMER;
             }
 
             string delaystr = words[1];
             string[] parts = delaystr.Split('.');
-            if( parts.Length==1)
+            if (parts.Length == 1)
             {
                 return TIMER;
             }
             int delay = TIMER;
-            if( Int32.TryParse(parts[0], out delay))
+            if (Int32.TryParse(parts[0], out delay))
             {
                 return delay;
             }
@@ -161,7 +161,9 @@ namespace ProjectX
 
         private void pop_out(object sender, object e)
         {
+
             Popup.Visibility = Visibility.Collapsed;
+            popupTimer.Stop();
         }
 
         private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
@@ -219,51 +221,52 @@ namespace ProjectX
                 convertStream = new KinectAudioStream(audioStream);
 
                 setupSpeechRecognition();
-                
+
             }
         }
 
         private void FrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
         {
             MultiSourceFrame msf = e.FrameReference.AcquireFrame();
-           
-                if (msf != null)
+
+            if (msf != null)
+            {
+                using (BodyFrame bodyFrame = msf.BodyFrameReference.AcquireFrame())
                 {
-                    using (BodyFrame bodyFrame = msf.BodyFrameReference.AcquireFrame())
+                    if (bodyFrame != null)
                     {
-                        if (bodyFrame != null)
+                        bodyFrame.GetAndRefreshBodyData(bodies);
+                        bodyCanvas.Children.Clear();
+                        bool sweetSpot = false;
+                        foreach (Body body in bodies)
                         {
-                            bodyFrame.GetAndRefreshBodyData(bodies);
-                            bodyCanvas.Children.Clear();
-                            bool sweetSpot = false;
-                            foreach (Body body in bodies)
+                            if (body.IsTracked)
                             {
-                                if (body.IsTracked)
+                                if (ifTrackable(body))
                                 {
-                                    if (ifTrackable(body))
-                                    {
-                                        //isSpeechEnabled = true;
-                                        gestureEngine.Body = body;
-                                        gestureEngine.StartRecognize();
-                                        sweetSpot = true;
-                                    }
-                                    
+                                    //isSpeechEnabled = true;
+                                    gestureEngine.Body = body;
+                                    gestureEngine.StartRecognize();
+                                    sweetSpot = true;
                                 }
-                                else
-                                {
-                                    //isSpeechEnabled = false;
-                                    bodies = new Body[6];
+
+                            }
+                            else
+                            {
+                                //isSpeechEnabled = false;
+                                bodies = new Body[6];
                                 //Body_Tracking_Highlight(false);
                             }
-                            }
-                            Body_Tracking_Highlight(sweetSpot);
+                        }
+                        Body_Tracking_Highlight(sweetSpot);
                     }
                 }
-                } else
+            }
+            else
             {
                 return;
             }
-            
+
         }
 
         /// <summary>
@@ -290,12 +293,14 @@ namespace ProjectX
         private void swipeRight()
         {
             print("Swipe Right");
+            Intro.Visibility = Visibility.Collapsed;
             moveIndex(-1);
         }
 
         private void swipeLeft()
         {
             print("Swipe Left");
+            Intro.Visibility = Visibility.Collapsed;
             moveIndex(1);
         }
 
@@ -383,7 +388,7 @@ namespace ProjectX
                     {
                         print("Found");
                         moveToIndex(index);
-                        
+
                     }
                 }
             }
@@ -417,7 +422,7 @@ namespace ProjectX
 
         /////////////////////////////////////////////////////        
         // Handlers 
-        /////////////////////////////////////////////////////	
+        /////////////////////////////////////////////////////   
 
         // reposition the images
         void _timer_Tick(object sender, object e)
@@ -439,7 +444,7 @@ namespace ProjectX
 
         /////////////////////////////////////////////////////        
         // Private Methods 
-        /////////////////////////////////////////////////////	
+        /////////////////////////////////////////////////////   
 
 
         // add images to the stage
@@ -456,14 +461,14 @@ namespace ProjectX
                 print(uri.ToString());
                 //BitmapImage im = new BitmapImage(uri);
                 string workingDirectory = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName).ToString();
-                BitmapImage im =  new BitmapImage(new Uri(workingDirectory + "\\ProjectX\\Assets\\" + url, UriKind.Absolute));
+                BitmapImage im = new BitmapImage(new Uri(workingDirectory + "\\ProjectX\\Assets\\" + url, UriKind.Absolute));
                 image.Source = im;
 
                 image.Height = im.Height;
                 image.Width = im.Width;
-                if(im==null)
+                if (im == null)
                 {
-                   print("NULL img");
+                    print("NULL img");
                 }
 
                 // add and reposition the image 
@@ -477,7 +482,7 @@ namespace ProjectX
         // move the index
         private void moveIndex(int value)
         {
-            
+
             print("Target = " + _target);
             if (value > 0)
             {
@@ -488,20 +493,21 @@ namespace ProjectX
                 _target = (_target + _images.Count + value) % (_images.Count);
             }
             int moveToIndx = (int)_target;
-            print("image time: "+getTimeInterval(moveToIndx));
+            print("image time: " + getTimeInterval(moveToIndx));
             this.slideshowTimer.Stop();
-            this.slideshowTimer.Interval = TimeSpan.FromMilliseconds(1000*getTimeInterval(moveToIndx));
+            this.slideshowTimer.Interval = TimeSpan.FromMilliseconds(1000 * getTimeInterval(moveToIndx));
             this.slideshowTimer.Start();
 
         }
 
         private void moveToIndex(int value)
         {
-            if (!(_target==value)) {
+            if (!(_target == value))
+            {
 
             }
             print("Target = " + _target);
-            moveIndex(value-(int)_target);
+            moveIndex(value - (int)_target);
         }
 
         // reposition the image
@@ -554,7 +560,7 @@ namespace ProjectX
 
         /////////////////////////////////////////////////////        
         // Public Methods
-        /////////////////////////////////////////////////////	
+        /////////////////////////////////////////////////////   
 
         // start the timer
         public void Start()
@@ -577,10 +583,12 @@ namespace ProjectX
                 isSpeechEnabled = true;
                 CanvasBorder.BorderBrush = new SolidColorBrush(Colors.MediumSeaGreen);
                 //CanvasBorder.BorderThickness = new Thickness(8);
-                LayoutRoot.Background = new SolidColorBrush(Colors.Honeydew);
+                //LayoutRoot.Background = new SolidColorBrush(Colors.Honeydew);
                 if (slideshowTimer.IsEnabled)
                 {
                     slideshowTimer.Stop();
+                    popupTimer.Start();
+                    Intro.Visibility = Visibility.Visible;
                     Popup.Visibility = Visibility.Visible;
                     Greeting.Visibility = Visibility.Visible;
                     Goodbye.Visibility = Visibility.Collapsed;
@@ -592,10 +600,11 @@ namespace ProjectX
                 isSpeechEnabled = false;
                 CanvasBorder.BorderBrush = new SolidColorBrush(Colors.OrangeRed);
                 //CanvasBorder.BorderThickness = new Thickness(8);
-                LayoutRoot.Background = new SolidColorBrush(Colors.LemonChiffon);
+                //LayoutRoot.Background = new SolidColorBrush(Colors.LemonChiffon);
                 if (!slideshowTimer.IsEnabled)
                 {
                     slideshowTimer.Start();
+                    popupTimer.Start();
                     Popup.Visibility = Visibility.Visible;
                     Greeting.Visibility = Visibility.Collapsed;
                     Goodbye.Visibility = Visibility.Visible;
@@ -606,5 +615,5 @@ namespace ProjectX
         }
 
     }
-    
+
 }
