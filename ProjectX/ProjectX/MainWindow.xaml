@@ -17,13 +17,137 @@
         <Canvas Name="bodyCanvas" Width="1000" Height="1000" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
         <Border
-            BorderThickness="8"
+            BorderThickness="14"
             BorderBrush="OrangeRed"
             x:Name="CanvasBorder"
             >
-            <Canvas x:Name="LayoutRoot" Background="LemonChiffon">
+            <Canvas x:Name="LayoutRoot" >
             </Canvas>
         </Border>
+        <Canvas Name="Intro" Width="1600" Height="1100" HorizontalAlignment="Center" VerticalAlignment="Center" Background="AliceBlue" Visibility="Collapsed">
+            <Border Height="125" Width="1600">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                
+                    Name="Welcome_Text"
+                    FontSize="60"
+                    Foreground="SeaGreen" 
+                    Visibility="Visible"
+                
+                    >
+                    Welcome to the WALL OF INSPIRATION
+                </TextBlock>
+            </Border>
+            <Border Height="500" Width="1600">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                
+                    Name="Swipe_Text"
+                    FontSize="54"
+                    Foreground="Navy" 
+                    Visibility="Visible"
+                
+                    >
+                    SWIPE
+                </TextBlock>
+            </Border>
+            <Border Height="650" Width="1600">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                
+                    Name="Explain_Text"
+                    FontSize="54"
+                    Foreground="Black" 
+                    Visibility="Visible"
+                
+                    >
+                    to scroll
+                </TextBlock>
+            </Border>
+            <Border Height="1050" Width="1600">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                
+                    Name="Or_Text"
+                    FontSize="54"
+                    Foreground="DarkGray" 
+                    Visibility="Visible"
+                
+                    >
+                    or
+                </TextBlock>
+            </Border>
+            <Border Height="600" Width="600">
+                <Image VerticalAlignment="Center" HorizontalAlignment="Right" Height="400" Source="Assets/beg_swipe.png"/>
+            </Border>
+            <Border Height="600" Width="1200">
+                <Image VerticalAlignment="Center" HorizontalAlignment="Right" Height="400" Source="Assets/end_swipe.png"/>
+            </Border>
+            <Border Height="1500" Width="600">
+                <Image VerticalAlignment="Center" HorizontalAlignment="Right" Height="400" Source="Assets/rest.png"/>
+            </Border>
+            <Border Height="1500" Width="1200">
+                <Image VerticalAlignment="Center" HorizontalAlignment="Right" Height="400" Source="Assets/speak.png"/>
+            </Border>
+
+            <Border Height="1400" Width="1600">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                
+                    Name="Speak_Text"
+                    FontSize="54"
+                    Foreground="DarkGoldenrod" 
+                    Visibility="Visible"
+                
+                    >
+                    SAY
+                </TextBlock>
+            </Border>
+            <Border Height="1550" Width="1600">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                
+                    Name="LastName_Text"
+                    FontSize="54"
+                    Foreground="Black" 
+                    Visibility="Visible"
+                
+                    >
+                    a scientist's
+                </TextBlock>
+            </Border>
+            <Border Height="1700" Width="1600">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    FontSize="54"
+                    Foreground="Black" 
+                    Visibility="Visible"
+                
+                    >
+                    name
+                </TextBlock>
+            </Border>
+            <Border Height="2000" Width="1600">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    FontSize="48"
+                    Foreground="DimGray" 
+                    Visibility="Visible"
+                
+                    >
+                    Swipe to Begin
+                </TextBlock>
+            </Border>
+
+        </Canvas>
         <Canvas Name="Name_Pop" Width="400" Height="75" HorizontalAlignment="Center" VerticalAlignment="Top" Background="WhiteSmoke" Visibility="Collapsed">
             <Border Height="75" Width="400">
                 <TextBlock
@@ -66,10 +190,10 @@
                 >
                 Good Bye 😉
             </TextBlock>
-            
+
         </Canvas>
         <k:KinectUserViewer Name="KinectRegion"  VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="100" Width="150"></k:KinectUserViewer>
-        
+
     </Grid>
-    
+
 </Window>
