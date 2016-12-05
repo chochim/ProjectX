@@ -159,6 +159,12 @@
     <Resource Include="Assets\SplashScreen.scale-100.png" />
     <Resource Include="Assets\StoreLogo.scale-100.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\beg_swipe.png" />
+    <Resource Include="Assets\end_swipe.png" />
+    <Resource Include="Assets\rest.png" />
+    <Resource Include="Assets\speak.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

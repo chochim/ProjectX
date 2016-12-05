@@ -157,11 +157,13 @@ namespace ProjectX
         private void next_slide(object sender, object e)
         {
             moveIndex(1);
+            this.slideshowTimer.Stop();
+            this.slideshowTimer.Start();
         }
 
         private void pop_out(object sender, object e)
         {
-
+            
             Popup.Visibility = Visibility.Collapsed;
             popupTimer.Stop();
         }
@@ -482,7 +484,6 @@ namespace ProjectX
         // move the index
         private void moveIndex(int value)
         {
-
             print("Target = " + _target);
             if (value > 0)
             {
@@ -494,9 +495,9 @@ namespace ProjectX
             }
             int moveToIndx = (int)_target;
             print("image time: " + getTimeInterval(moveToIndx));
-            this.slideshowTimer.Stop();
+            //this.slideshowTimer.Stop();
             this.slideshowTimer.Interval = TimeSpan.FromMilliseconds(1000 * getTimeInterval(moveToIndx));
-            this.slideshowTimer.Start();
+            //this.slideshowTimer.Start();
 
         }
 
@@ -525,8 +526,9 @@ namespace ProjectX
             }
             else
             {
-                SCALING = this.ActualHeight / image.Height;
+                SCALING = (this.ActualHeight) / image.Height;
             }
+            
             scaleTransform.ScaleX = SCALING - Math.Abs(diffFactor) * SCALE_DOWN_FACTOR;
             scaleTransform.ScaleY = SCALING - Math.Abs(diffFactor) * SCALE_DOWN_FACTOR;
             image.RenderTransform = scaleTransform;
@@ -535,7 +537,7 @@ namespace ProjectX
             // double left = _xCenter - (IMAGE_WIDTH * scaleTransform.ScaleX) / 2 + diffFactor * OFFSET_FACTOR;
             double left = _xCenter - (image.Width * scaleTransform.ScaleX) / 2 + diffFactor * OFFSET_FACTOR;
             // double top = _yCenter - (IMAGE_HEIGHT * scaleTransform.ScaleY) / 2;
-            double top = _yCenter - (image.Height * scaleTransform.ScaleY) / 2;
+            double top = _yCenter - (image.Height * scaleTransform.ScaleY) / 2 ;
             image.Opacity = 1 - Math.Abs(diffFactor) * OPACITY_DOWN_FACTOR;
 
             image.SetValue(Canvas.LeftProperty, left);
@@ -573,7 +575,7 @@ namespace ProjectX
 
             // Save the center position
             _xCenter = this.ActualWidth / 2;
-            _yCenter = this.ActualHeight / 2;
+            _yCenter = -14 + this.ActualHeight / 2;
         }
 
         private void Body_Tracking_Highlight(bool tracked)
@@ -605,7 +607,8 @@ namespace ProjectX
                 {
                     slideshowTimer.Start();
                     popupTimer.Start();
-                    Popup.Visibility = Visibility.Visible;
+                    Intro.Visibility = Visibility.Collapsed;
+                    Popup.Visibility = Visibility.Collapsed;
                     Greeting.Visibility = Visibility.Collapsed;
                     Goodbye.Visibility = Visibility.Visible;
                     popupTimer.Tick += pop_out;
