@@ -30,8 +30,10 @@ namespace ProjectX
     public partial class MainWindow : Window
     {
 
-        private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg", "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg", "projectx_22.jpg" };//, "projectx_32.jpg", "projectx_39.jpg" };//, "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
-        private string[] NAMES = { "alzheimer", "bailey", "bethe", "blackwell", "bolton", "buck", "cerrache" };
+        //private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg", "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg", "projectx_22.jpg" };//, "projectx_32.jpg", "projectx_39.jpg" };//, "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
+        //private string[] NAMES = { "alzheimer", "bailey", "bethe", "blackwell", "bolton", "buck", "cerrache" };
+        public string[] IMAGES = new string[98];
+        public string[] NAMES = new string[98];
         private static double IMAGE_WIDTH = 128;        // Image Width
         private static double IMAGE_HEIGHT = 128;       // Image Height        
         private static double SPRINESS = 0.15;          // Control the Spring Speed
@@ -450,18 +452,20 @@ namespace ProjectX
         // add images to the stage
         private void addImages()
         {
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string[] fileArray = Directory.GetFiles((@desktopPath + "\\sciencenterimages\\"), "*.jpg");
+            for (int j = 0; j < IMAGES.Length; j++)
+            {
+                IMAGES[j] = (System.IO.Path.GetFileName(fileArray[j]));
+                NAMES[j] = IMAGES[j].Split('_')[0];
+            }
             for (int i = 0; i < IMAGES.Length; i++)
             {
                 // get the image resources from the xap
                 string url = IMAGES[i];
                 Image image = new Image();
-                var path = System.IO.Path.Combine("C:/Users/Jack/Source/Repos/ProjectX/ProjectX/ProjectX/Assets", url);
-                print(path.ToString());
-                Uri uri = new Uri(path);
-                print(uri.ToString());
                 //BitmapImage im = new BitmapImage(uri);
-                string workingDirectory = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName).ToString();
-                BitmapImage im = new BitmapImage(new Uri(workingDirectory + "\\ProjectX\\Assets\\" + url, UriKind.Absolute));
+                BitmapImage im = new BitmapImage(new Uri(desktopPath + "\\sciencenterimages\\" + url, UriKind.Absolute));
                 image.Source = im;
 
                 image.Height = im.Height;
