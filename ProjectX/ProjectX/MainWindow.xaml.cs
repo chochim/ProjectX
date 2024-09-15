@@ -5,22 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Drawing;
-using Microsoft.Kinect.Wpf.Controls;
-using System.Reflection;
 
 namespace ProjectX
 {
@@ -30,15 +20,11 @@ namespace ProjectX
     public partial class MainWindow : Window
     {
 
-        //private string[] IMAGES = { "projectx_4.jpg", "projectx_7.jpg", "projectx_12.jpg", "projectx_13.jpg", "projectx_15.jpg", "projectx_17.jpg", "projectx_22.jpg" };//, "projectx_32.jpg", "projectx_39.jpg" };//, "projectx_43.jpg", "projectx_44.jpg", "projectx_45.jpg", "projectx_55.jpg", "projectx_61.jpg" };    // images
-        //private string[] NAMES = { "alzheimer", "bailey", "bethe", "blackwell", "bolton", "buck", "cerrache" };
         public static string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         public static string[] fileArray = Directory.GetFiles((@desktopPath + "\\sciencenterimages\\"), "*.jpg");
         public static int imagesCount = fileArray.Length;  
         public string[] IMAGES = new string[imagesCount];
         public string[] NAMES = new string[imagesCount];
-        private static double IMAGE_WIDTH = 128;        // Image Width
-        private static double IMAGE_HEIGHT = 128;       // Image Height        
         private static double SPRINESS = 0.15;          // Control the Spring Speed
         private static double DECAY = 0.25;             // Control the bounce Speed
         private static double SCALE_DOWN_FACTOR = 0.025;  // Scale between images
@@ -84,8 +70,6 @@ namespace ProjectX
         private static int FPS = 30;                // fps of the on enter frame event
         private DispatcherTimer _timer = new DispatcherTimer(); // on enter frame simulator
 
-
-
         public MainWindow()
         {
             this.InitializeComponent();
@@ -102,11 +86,11 @@ namespace ProjectX
 
         /// <summary>
         /// 
-        /// Takes a index and returns the time interval for that particular file
+        /// Takes a index and returns the time interval associated with that file 
         /// "projectx_7.jpg" -> returns 7
         /// </summary>
         /// <param name="index"></param>
-        /// <returns></returns>
+        /// <returns>Time Interval in seconds</returns>
         public int getTimeInterval(int index)
         {
             string fileName = IMAGES[index];
@@ -130,6 +114,11 @@ namespace ProjectX
             return delay;
         }
 
+        /// <summary>
+        /// 
+        /// Returns the Kinect Voice Recognizer
+        /// </summary>
+        /// <returns></returns>
         private static RecognizerInfo TryGetKinectRecognizer()
         {
             IEnumerable<RecognizerInfo> recognizers;
@@ -159,6 +148,11 @@ namespace ProjectX
             return null;
         }
 
+        /// <summary>
+        /// Proceeds towards the next slide
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void next_slide(object sender, object e)
         {
             moveIndex(1);
@@ -166,13 +160,22 @@ namespace ProjectX
             this.slideshowTimer.Start();
         }
 
+        /// <summary>
+        /// Event called when the greeting timeout happens
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pop_out(object sender, object e)
         {
-            
             Popup.Visibility = Visibility.Collapsed;
             popupTimer.Stop();
         }
 
+        /// <summary>
+        /// Window Size change event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
         {
             double newWindowHeight = e.NewSize.Height;
@@ -188,25 +191,20 @@ namespace ProjectX
 
 
         KinectSensor sensor;
-        InfraredFrameReader irReader;
-        //BodyFrameReader bodyReader;
 
-        ushort[] irData;
+        /*ushort[] irData;
         byte[] irDataConverted;
-        WriteableBitmap irBitmap;
+        WriteableBitmap irBitmap;*/
 
         Body[] bodies;
         MultiSourceFrameReader msfr;
 
         GestureRecognitionEngine gestureEngine;
 
-
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Start();
 
-            Debug.WriteLine(this.ActualHeight);
-            Debug.WriteLine(this.ActualWidth);
             OFFSET_FACTOR = this.ActualWidth;
             sensor = KinectSensor.GetDefault();
             if (sensor != null)
@@ -232,6 +230,11 @@ namespace ProjectX
             }
         }
 
+        /// <summary>
+        /// Process the frames
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
         {
             MultiSourceFrame msf = e.FrameReference.AcquireFrame();
@@ -251,7 +254,6 @@ namespace ProjectX
                             {
                                 if (ifTrackable(body))
                                 {
-                                    //isSpeechEnabled = true;
                                     gestureEngine.Body = body;
                                     gestureEngine.StartRecognize();
                                     sweetSpot = true;
@@ -260,9 +262,7 @@ namespace ProjectX
                             }
                             else
                             {
-                                //isSpeechEnabled = false;
                                 bodies = new Body[6];
-                                //Body_Tracking_Highlight(false);
                             }
                         }
                         Body_Tracking_Highlight(sweetSpot);
@@ -297,6 +297,9 @@ namespace ProjectX
             }
         }
 
+        /// <summary>
+        /// Swipe Right Gesture
+        /// </summary>
         private void swipeRight()
         {
             print("Swipe Right");
@@ -328,6 +331,12 @@ namespace ProjectX
                    body.Joints[JointType.SpineBase].Position.Z >= VIEW_FRUSTUM_Z);
         }
 
+
+        /// <summary>
+        /// Returns the Choices which we use for Speech Recognition.
+        /// I.e. acoustic models for our training data i.e. Scientists' last name
+        /// </summary>
+        /// <returns></returns>
         private Choices getSpeechChoices()
         {
             var directions = new Choices();
@@ -375,10 +384,13 @@ namespace ProjectX
             }
         }
 
+        /// <summary>
+        /// Called when Speech is recognized
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            print("Recognized");
-            // isSpeechEnabled = true;
             print(" isSpeechEnabled? " + isSpeechEnabled);
             if (isSpeechEnabled)
             {
@@ -395,12 +407,17 @@ namespace ProjectX
                     {
                         print("Found");
                         moveToIndex(index);
-
                     }
                 }
             }
         }
 
+
+        /// <summary>
+        /// Finds the best match from the names of scientists
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
         private int findName(string v)
         {
             for (int i = 0; i < NAMES.Length; ++i)
@@ -619,9 +636,6 @@ namespace ProjectX
                     popupTimer.Tick += pop_out;
                 }
             }
-
         }
-
     }
-
 }
